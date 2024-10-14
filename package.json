@@ -8,8 +8,23 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.6.0",
+    "@fortawesome/fontawesome-svg-core": "^6.6.0",
+    "@fortawesome/free-regular-svg-icons": "^6.6.0",
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "bcryptjs": "^2.4.3",
+    "cookie-micro": "^1.0.1",
     "core-js": "^3.8.3",
-    "vue": "^3.2.13"
+    "font-awesome": "^4.7.0",
+    "instagram": "file:",
+    "js-cookie": "^3.0.5",
+    "jsonwebtoken": "^9.0.2",
+    "uuid": "^10.0.0",
+    "vue": "^3.2.13",
+    "vue-router": "^4.0.13",
+    "vuex": "^4.1.0",
+    "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
@@ -18,7 +33,9 @@
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
     "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3"
+    "eslint-plugin-vue": "^8.0.3",
+    "node-sass": "^9.0.0",
+    "sass-loader": "^10.5.2"
   },
   "eslintConfig": {
     "root": true,
