@@ -1,5 +1,8 @@
 <template>
   <div class="menu-wrap">
+    <div class="banner">
+      <img src="/assets/icons/instalogo.png" alt="" />
+    </div>
     <base-menu-button
       filename="house-solid.svg"
       class="home-button"
@@ -27,11 +30,20 @@
         <p>프로필</p>
       </template>
     </base-menu-button>
-    <base-menu-button filename="bars-solid.svg" class="more-button">
+    <base-menu-button
+      filename="bars-solid.svg"
+      class="more-button"
+      @click="openMoreModal"
+    >
       <template v-slot:text>
         <p>더보기</p>
       </template>
     </base-menu-button>
+    <more-modal
+      class="more-modal"
+      v-if="isMoreModalVisible"
+      @close="closeMoreModal"
+    />
   </div>
 </template>
 
@@ -40,6 +52,7 @@ import BaseMenuButton from "@/components/BaseElements/BaseMenuButton.vue";
 import { useRouter } from "vue-router";
 import Cookies from "js-cookie";
 import { ref } from "vue";
+import MoreModal from "@/components/Modals/MoreModal.vue";
 
 const router = useRouter();
 
@@ -54,6 +67,16 @@ const pushProfile = () => {
 
   router.push({ name: "profile", params: { id: userId.value } });
 };
+
+const isMoreModalVisible = ref(false);
+
+const openMoreModal = () => {
+  isMoreModalVisible.value = true;
+};
+
+const closeMoreModal = () => {
+  isMoreModalVisible.value = false;
+};
 </script>
 
 <style scoped>
@@ -65,6 +88,17 @@ const pushProfile = () => {
   position: sticky;
   top: 0;
   height: 100vh;
+}
+
+.banner {
+  grid-column: 1;
+  grid-row: 1;
+  object-fit: cover;
+}
+
+.banner img {
+  width: 100%;
+  height: 100%;
 }
 
 .home-button {

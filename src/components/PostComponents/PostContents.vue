@@ -1,7 +1,11 @@
 <template>
   <div class="post-contents">
-    <div class="post-img" v-for="post in posts" :key="post.file_idx">
-      <img :src="`/upload/${post.file_name}`" :alt="post.file_name" />
+    <div class="post-img fit" v-for="post in posts" :key="post.file_idx">
+      <img
+        class="fit"
+        :src="`/upload/${post.file_name}`"
+        :alt="post.file_name"
+      />
     </div>
   </div>
 </template>
@@ -42,6 +46,7 @@ const loadPosts = () => {
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
   grid-template-rows: repeat(1, minmax(0, 1fr));
+  border-radius: 1%;
 }
 
 .post-img {
@@ -49,11 +54,20 @@ const loadPosts = () => {
   grid-row: 1;
   background-color: black;
   align-content: center;
+  border-radius: 1%;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #ececec;
 }
 
 .post-img img {
   width: 100%;
   height: auto;
   max-height: 100%;
+  border-radius: 1%;
+}
+
+.fit {
+  object-fit: cover;
 }
 </style>

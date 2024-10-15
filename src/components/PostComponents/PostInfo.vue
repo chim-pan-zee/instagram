@@ -1,19 +1,36 @@
 <template>
   <div class="post-info">
     <div class="post-buttons">
-      <button class="like" @click="increaseLikes"></button>
-      <button class="comment"></button>
+      <button class="like" @click="increaseLikes" :disabled="isAnimating">
+        <img
+          v-show="!isLiked"
+          src="/assets/icons/heart-regular.svg"
+          alt=""
+          :class="{ bounce: isAnimating }"
+        />
+        <img
+          v-show="isLiked"
+          src="/assets/icons/heart-solid.svg"
+          alt=""
+          :class="{ bounce: isAnimating }"
+        />
+      </button>
+      <button
+        class="comment"
+        :disabled="isAnimating"
+        @click="$emit('openModal')"
+      >
+        <img src="/assets/icons/comment.svg" alt="" />
+      </button>
     </div>
     <div class="post-likes">좋아요 {{ likesCount }} 개</div>
-    <div class="post-contents">
-      <div class="contents">
-        <b>{{ userId }}</b>
-        {{ contents }}
-      </div>
-      <div class="comment-form">
-        <input type="text" name="" id="" placeholder="댓글 달기..." />
-        <button>전송</button>
-      </div>
+    <div class="contents">
+      <b style="font-weight: 600; font-size: 11pt">{{ userId }}</b>
+      {{ contents }}
+    </div>
+    <div class="comment-form">
+      <input type="text" placeholder="댓글 달기..." />
+      <button>전송</button>
     </div>
   </div>
 </template>
@@ -37,6 +54,8 @@ const contents = ref(props.contents);
 const postId = ref(props.postId);
 const authorToken = window.localStorage.getItem("user_token");
 const likesCount = ref("");
+const isLiked = ref(false);
+const isAnimating = ref(false);
 
 watch(
   () => props.postId,
@@ -47,6 +66,13 @@ watch(
 );
 
 const increaseLikes = () => {
+  isLiked.value = !isLiked.value;
+  isAnimating.value = true;
+
+  setTimeout(() => {
+    isAnimating.value = false;
+  }, 300);
+
   const likeData = {
     postId: postId.value,
     authorToken: authorToken,
@@ -91,12 +117,13 @@ const getLikes = () => {
 .post-info {
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
-  grid-template-rows: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(5, minmax(0, 1fr));
+  padding-top: 0.5em;
+  gap: 0.5em;
 }
 
 .post-buttons {
   grid-row: 1;
-
   display: grid;
   grid-template-columns: repeat(10, minmax(0, 1fr));
   grid-template-rows: repeat(1, minmax(0, 1fr));
@@ -109,24 +136,20 @@ const getLikes = () => {
   font-weight: bold;
 }
 
-.post-contents {
-  grid-row: 3;
-
-  display: grid;
-  grid-template-columns: repeat(1, minmax(0, 1fr));
-  grid-template-rows: repeat(2, minmax(0, 1fr));
-}
-
 .contents {
-  grid-row: 1;
+  grid-row: 3;
   text-align: left;
 }
 
 .comment-form {
-  grid-row: 2;
+  grid-row: 4;
   display: grid;
   grid-template-columns: repeat(13, minmax(0, 1fr));
   grid-template-rows: repeat(1, minmax(0, 1fr));
+  padding-bottom: 0.5em;
+  border-bottom-style: solid;
+  border-bottom-color: #e2e2e2;
+  border-bottom-width: 1px;
 }
 
 .comment-form input {
@@ -137,14 +160,67 @@ const getLikes = () => {
 
 .comment-form button {
   grid-column: 12/14;
-
   border: none;
   outline: none;
   background: none;
-  color: #0095f6;
+  color: rgb(19, 152, 254);
 }
 
 .comment-form button:hover {
   cursor: pointer;
+}
+
+.like {
+  border: none;
+  outline: none;
+  background: none;
+  text-align: left;
+}
+
+.like:hover {
+  cursor: pointer;
+}
+
+.like img {
+  width: auto;
+  height: 100%;
+  object-fit: cover;
+}
+
+.comment {
+  border: none;
+  outline: none;
+  background: none;
+  text-align: left;
+}
+
+.comment:hover {
+  cursor: pointer;
+}
+
+.comment img {
+  width: auto;
+  height: 100%;
+  object-fit: cover;
+}
+
+.like:disabled {
+  cursor: default;
+}
+
+.bounce {
+  animation: bounce 0.3s forwards;
+}
+
+@keyframes bounce {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 </style>

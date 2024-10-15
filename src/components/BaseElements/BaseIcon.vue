@@ -6,10 +6,10 @@
 
 <script setup>
 import { defineProps, computed } from "vue";
-import HouseSolid from "@/assets/icons/house-solid.svg";
-import SquarePlusRegular from "@/assets/icons/square-plus-regular.svg";
-import BarsSolid from "@/assets/icons/bars-solid.svg";
-import ArrowLeftSolid from "@/assets/icons/arrow-left-solid.svg";
+import HouseSolid from "/public/assets/icons/house-solid.svg";
+import SquarePlusRegular from "/public/assets/icons/square-plus-regular.svg";
+import BarsSolid from "/public/assets/icons/bars-solid.svg";
+import ArrowLeftSolid from "/public/assets/icons/arrow-left-solid.svg";
 
 const props = defineProps({
   filename: String,

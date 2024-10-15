@@ -6,7 +6,7 @@
     <base-button class="profile-edit-button" @click="toEdit"
       >프로필 편집</base-button
     >
-    <div class="posts">게시물 <slot name="posts">0</slot></div>
+    <div class="post-count">게시물 <slot name="posts">0</slot></div>
     <div class="followers">팔로워 <slot name="followers">0</slot></div>
     <div class="follows">팔로우 <slot name="follows">0</slot></div>
     <div class="user-name"><slot name="userName">로딩중</slot></div>
@@ -52,7 +52,7 @@ const toEdit = () => {
   cursor: pointer;
 }
 
-.posts {
+.post-count {
   grid-column: 1/ 2;
   grid-row: 4;
   text-align: left;

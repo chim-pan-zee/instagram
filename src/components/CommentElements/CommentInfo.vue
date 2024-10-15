@@ -1,7 +1,20 @@
 <template>
   <div class="info-wrap">
     <div class="button-wrap">
-      <button @click="increaseLikes"></button>
+      <button class="like" @click="increaseLikes" :disabled="isAnimating">
+        <img
+          v-show="!isLiked"
+          src="/assets/icons/heart-regular.svg"
+          alt=""
+          :class="{ bounce: isAnimating }"
+        />
+        <img
+          v-show="isLiked"
+          src="/assets/icons/heart-solid.svg"
+          alt=""
+          :class="{ bounce: isAnimating }"
+        />
+      </button>
       <button></button>
     </div>
     <div class="info-text-wrap">
@@ -23,6 +36,8 @@ const props = defineProps({
 const postId = ref(props.postId);
 const authorToken = window.localStorage.getItem("user_token");
 const likesCount = ref("");
+const isLiked = ref(false);
+const isAnimating = ref(false);
 
 watch(
   () => props.postId,
@@ -33,6 +48,12 @@ watch(
 );
 
 const increaseLikes = () => {
+  isLiked.value = !isLiked.value;
+  isAnimating.value = true;
+
+  setTimeout(() => {
+    isAnimating.value = false;
+  }, 300);
   const likeData = {
     postId: postId.value,
     authorToken: authorToken,
@@ -100,6 +121,35 @@ const getLikes = () => {
   text-align: left;
 
   font-weight: bold;
+  border: none;
+  outline: none;
+  background: none;
+  text-align: left;
+}
+
+.like:hover {
+  cursor: pointer;
+}
+
+.like img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+.bounce {
+  animation: bounce 0.3s forwards;
+}
+
+@keyframes bounce {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .date {

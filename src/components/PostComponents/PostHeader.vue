@@ -4,15 +4,21 @@
       <profile-image class="profile-image"></profile-image>
     </button>
     <button class="user-id">{{ userId }}</button>
+    <button class="post-option" @click="controlModal">
+      <img src="/assets/icons/ellipsis-8.svg" alt="" />
+    </button>
+    <base-modal @close="controlModal" v-if="isModalVisible"></base-modal>
   </div>
 </template>
 
 <script setup>
 import ProfileImage from "../ProfileComponents/ProfileImage.vue";
+import BaseModal from "../BaseElements/BaseModal.vue";
 import { ref, defineProps, onMounted } from "vue";
 
 const userId = ref("");
 const userUUID = ref("");
+const isModalVisible = ref(false);
 
 const props = defineProps({
   userId: String,
@@ -23,6 +29,10 @@ onMounted(() => {
   userId.value = props.userId;
   userUUID.value = props.userUUID;
 });
+
+const controlModal = () => {
+  isModalVisible.value = !isModalVisible.value;
+};
 </script>
 
 <style>
@@ -45,5 +55,21 @@ onMounted(() => {
   border: none;
   background: none;
   outline: none;
+}
+
+.post-option {
+  grid-column: 10/11;
+  border: none;
+  background: none;
+  outline: none;
+}
+
+.post-option img {
+  width: 100%;
+  height: auto;
+}
+
+.post-option:hover {
+  cursor: pointer;
 }
 </style>

@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import DetailViewModal from "@/components/Modals/DetailViewModal.vue";
+import DetailViewModal from "@/components/Modals/PostModals/DetailViewModal.vue";
 import axios from "axios";
 import { onMounted, ref } from "vue";
 
