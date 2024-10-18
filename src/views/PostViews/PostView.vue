@@ -12,6 +12,7 @@
           :userId="post.user_id"
           :created-at="post.created_at"
           :postId="post.post_uuid"
+          @updatePost="openUpdateModal(post.post_uuid, post.post_content)"
           class="post-header"
         ></post-header>
         <post-contents
@@ -36,6 +37,12 @@
       :postId="postId"
       @closeModal="closeModal"
     ></detail-view-modal>
+    <update-post-modal
+      v-if="isUpdateModal == true"
+      :postId="postId"
+      :postContent="postContent"
+      @closeModal="isUpdateModal = false"
+    ></update-post-modal>
   </div>
 </template>
 
@@ -44,18 +51,34 @@ import PostHeader from "@/components/PostComponents/PostHeader.vue";
 import PostInfo from "@/components/PostComponents/PostInfo.vue";
 import PostContents from "@/components/PostComponents/PostContents.vue";
 import DetailViewModal from "@/components/Modals/PostModals/DetailViewModal.vue";
+import UpdatePostModal from "@/components/Modals/PostModals/UpdatePostModal.vue";
 import axios from "axios";
 import { onMounted, ref } from "vue";
-// import Cookies from "js-cookie";
+import { useRouter } from "vue-router";
+const router = useRouter();
+const authorToken = window.localStorage.getItem("user_token");
 
 const posts = ref([]);
 const isDetailViewModal = ref(false);
+const isUpdateModal = ref(false);
 const postId = ref("");
+const postContent = ref("");
 const postLike = ref(false);
 let isLoading = false;
 let page = ref(0);
 
+const openUpdateModal = (id, contents) => {
+  console.log("연다");
+  isUpdateModal.value = true;
+  postId.value = id;
+  postContent.value = contents;
+};
+
 onMounted(() => {
+  if (!authorToken) {
+    router.push("/signin");
+  }
+
   loadPosts();
   window.addEventListener("scroll", handleScroll);
 });
@@ -119,6 +142,8 @@ const closeModal = () => {
   window.history.pushState(null, "", `/`);
 };
 </script>
+
+해당 코드에서, v-for의 post의 댓글을 눌러
 
 <style>
 .observer-target {

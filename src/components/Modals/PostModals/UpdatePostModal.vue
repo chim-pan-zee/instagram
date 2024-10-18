@@ -1,137 +1,137 @@
 <template>
-  <div :class="['modal-wrap', { 'expanded-modal': isNext }]">
-    <div class="text-wrap">
-      <p class="text" v-if="!images.length">새 게시물 만들기</p>
-      <p class="text" v-if="images.length && !isNext">추가</p>
-      <p class="text" v-if="images.length && isNext">새 게시물 업로드</p>
-      <button
-        class="backward-button"
-        v-if="images.length && !isNext"
-        @click="backward"
-      >
-        <img
-          style="width: 20px; height: 20px"
-          class="base-icon"
-          src="/assets/icons/arrowback.png"
-        />
-      </button>
-      <button
-        @click="isNext = true"
-        v-if="images.length && !isNext"
-        class="next-button"
-      >
-        <p style="color: blue">다음</p>
-      </button>
-      <button
-        @click="uploadPost"
-        v-if="images.length && isNext"
-        class="upload-excute-button"
-      >
-        <p style="color: blue" class="post-upload-button">업로드</p>
-      </button>
-    </div>
-    <div
-      class="upload-wrap"
-      @drop.prevent="dropInputTag($event)"
-      @dragover.prevent
-    >
-      <input
-        ref="imageInput"
-        id="input"
-        type="file"
-        name="image"
-        accept="image/*"
-        multiple
-        hidden
-        @change="uploadImage"
-      />
-
-      <img
-        class="upload-icon"
-        src="/assets/icons/img-n-video.png"
-        alt="upload icon"
-        v-if="!images.length"
-      />
-      <p class="upload-text" v-if="!images.length">
-        사진과 동영상을 여기에 끌어다 놓으세요
-      </p>
-      <base-button
-        class="upload-button"
-        @click="clickInputTag"
-        v-if="!images.length"
-      >
-        컴퓨터에서 선택
-      </base-button>
-
-      <div v-if="images.length" class="image-wrap">
-        <div class="full-image-wrap">
-          <img :src="images[currentIndex]" alt="image" class="full-image" />
-          <button
-            class="left-button"
-            @click="previewImage"
-            :disabled="currentIndex === 0"
-          >
-            <img
-              style="width: 100%; height: 100%"
-              src="/assets/icons/leftarrow.png"
-              alt=""
-            />
-          </button>
-          <button
-            class="right-button"
-            @click="nextImage"
-            :disabled="currentIndex === images.length - 1"
-          >
-            <img
-              style="width: 100%; height: 100%"
-              src="/assets/icons/rightarrow.png"
-              alt=""
-            />
-          </button>
-        </div>
-
-        <div v-if="images.length && isAddFiles" class="added-image-wrap">
-          <div
-            v-for="(img, index) in previewImgs"
-            :key="index"
-            class="added-image-container"
-            @click="currentIndex = index"
-          >
-            <img :src="img" alt="이미지 미리보기" class="added-image" />
-            <button class="delete-image" @click="removeImage(index)">X</button>
-          </div>
-          <button class="add-image" @click="clickInputTag">
-            <!-- <img
-              style="width: 100%; height: 100%"
-              src="/assets/icons/plusincircle.png"
-              alt=""
-            /> -->
-            +
-          </button>
-        </div>
+  <div class="modal-bg">
+    <div :class="['modal-wrap', { 'expanded-modal': isNext }]">
+      <div class="text-wrap">
+        <p class="text" v-if="isLoaded == false">새 게시물 만들기</p>
+        <p class="text" v-if="isLoaded == true && !isNext">이미지 수정</p>
+        <p class="text" v-if="images.length && isNext">게시물 수정</p>
 
         <button
-          class="add-image-button"
-          v-if="images.length"
-          @click="isAddFiles = !isAddFiles"
+          @click="isNext = true"
+          v-if="images.length && !isNext"
+          class="next-button"
         >
-          <img
-            style="width: 20px; height: 20px"
-            class="add-image-icon"
-            src="/assets/icons/plusincircle.png"
-            alt="add-image-icon"
-          />
+          <p style="color: blue">다음</p>
+        </button>
+        <button
+          @click="uploadPost"
+          v-if="images.length && isNext"
+          class="upload-excute-button"
+        >
+          <p style="color: blue" class="post-upload-button">업로드</p>
         </button>
       </div>
-    </div>
-    <!-- 글내용작성 -->
-    <div v-if="images.length && isNext" class="content-wrap">
-      <input
-        type="text"
-        v-model="contents"
-        placeholder="내용을 입력하세요..."
-        maxlength="1000"
-      />
+
+      <div
+        class="upload-wrap"
+        @drop.prevent="dropInputTag($event)"
+        @dragover.prevent
+      >
+        <input
+          ref="imageInput"
+          id="input"
+          type="file"
+          name="image"
+          accept="image/*"
+          multiple
+          hidden
+          @change="uploadImage"
+        />
+
+        <img
+          class="upload-icon"
+          src="/assets/icons/img-n-video.png"
+          alt="upload icon"
+          v-if="!images.length"
+        />
+        <p class="upload-text" v-if="!images.length">
+          사진과 동영상을 여기에 끌어다 놓으세요
+        </p>
+        <base-button
+          class="upload-button"
+          @click="clickInputTag"
+          v-if="!images.length"
+        >
+          컴퓨터에서 선택
+        </base-button>
+
+        <div v-if="images.length" class="image-wrap">
+          <div class="full-image-wrap">
+            <img
+              v-if="images[currentIndex]"
+              :src="`/upload/${images[currentIndex].file_name}`"
+              alt="image"
+              class="full-image"
+            />
+
+            <button
+              class="left-button"
+              @click="previewImage"
+              :disabled="currentIndex === 0"
+            >
+              <img
+                style="width: 100%; height: 100%"
+                src="/assets/icons/leftarrow.png"
+                alt=""
+              />
+            </button>
+            <button
+              class="right-button"
+              @click="nextImage"
+              :disabled="currentIndex === images.length - 1"
+            >
+              <img
+                style="width: 100%; height: 100%"
+                src="/assets/icons/rightarrow.png"
+                alt=""
+              />
+            </button>
+          </div>
+
+          <div v-if="images.length && isAddFiles" class="added-image-wrap">
+            <div
+              v-for="(img, index) in previewImgs"
+              :key="index"
+              class="added-image-container"
+              @click="currentIndex = index"
+            >
+              <img
+                :src="`/upload/${img.file_name}`"
+                alt="이미지 미리보기"
+                class="added-image"
+              />
+              <button class="delete-image" @click="removeImage(index)">
+                X
+              </button>
+            </div>
+          </div>
+
+          <button
+            class="add-image-button"
+            v-if="images.length"
+            @click="isAddFiles = !isAddFiles"
+          >
+            <img
+              style="width: 20px; height: 20px"
+              class="add-image-icon"
+              src="/assets/icons/plusincircle.png"
+              alt="add-image-icon"
+            />
+          </button>
+        </div>
+      </div>
+      <!-- 글내용작성 -->
+      <div v-if="images.length && isNext" class="content-wrap">
+        <div class="right-panel">
+          <textarea
+            class="content-text-area"
+            type="text"
+            v-model="contents"
+            placeholder="내용을 입력하세요..."
+            maxlength="1000"
+          ></textarea>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -139,34 +139,37 @@
 <script setup>
 import axios from "axios";
 import BaseButton from "../../BaseElements/BaseButton.vue";
-import { ref, defineEmits } from "vue";
+import { ref, defineEmits, defineProps, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import Cookies from "js-cookie";
 
-const backward = () => {
-  if (images.value && !isNext.value) {
-    images.value = [];
-    previewImgs.value = [];
-  } else if (images.value.length && isNext.value) {
-    isNext.value = false;
-  }
-};
+const props = defineProps({
+  postId: String,
+  postContent: String,
+});
 
 const router = useRouter();
 const emit = defineEmits(["submit"]);
 
 const images = ref([]);
 const previewImgs = ref([]);
+const originImgs = ref([]);
 const imageInput = ref(null);
 const imageFiles = ref([]);
 const isAddFiles = ref(false);
 const isNext = ref(false);
 const currentIndex = ref(0);
-const formData = new FormData();
+// const formData = new FormData();
+
+const isLoaded = ref(false);
 
 const userId = ref(Cookies.get("userId"));
 const authorToken = window.localStorage.getItem("user_token");
 const contents = ref("");
+
+onMounted(() => {
+  loadPosts(props.postId);
+});
 
 const uploadImage = (event) => {
   const files = event.target.files;
@@ -201,23 +204,19 @@ const clickInputTag = () => {
 
 const uploadPost = () => {
   const postData = {
+    postId: props.postId,
     authorToken: authorToken,
     contents: contents.value,
+    images: images.value,
   };
 
-  imageFiles.value.forEach((file) => {
-    formData.append("files", file);
-  });
-
-  formData.append(
-    "key",
-    new Blob([JSON.stringify(postData)], { type: "application/json" })
-  );
+  // formData.append(
+  //   "key",
+  //   new Blob([JSON.stringify(postData)], { type: "application/json" })
+  // );
 
   axios
-    .post(`/p/${userId.value}`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    })
+    .put(`/p/${userId.value}`, postData)
     .then((res) => {
       closeModal();
       if (router.currentRoute.value.path === "/") {
@@ -246,8 +245,12 @@ const previewImage = () => {
 };
 
 const removeImage = (index) => {
-  images.value.splice(index, 1);
-  previewImgs.value.splice(index, 1);
+  if (images.value.length > 1) {
+    images.value.splice(index, 1);
+    if (currentIndex.value >= images.value.length) {
+      currentIndex.value = Math.max(0, images.value.length - 1);
+    }
+  }
 };
 
 const nextImage = () => {
@@ -259,9 +262,43 @@ const nextImage = () => {
 const closeModal = () => {
   emit("closeModal");
 };
+
+const loadPosts = (id) => {
+  console.log("ㅎㅇ여");
+  axios
+    .get(`/p/file/${id}`)
+    .then((res) => {
+      images.value = res.data;
+      previewImgs.value = res.data;
+      originImgs.value = res.data;
+      isLoaded.value = true;
+      console.log("이미지 데이터가 도착했습니다.", res.data);
+      console.log("인덱스" + currentIndex.value);
+      console.log(
+        "사진 데이터가 도착했습니다.",
+        images.value[currentIndex.value]?.file_name
+      );
+    })
+    .catch((err) => {
+      console.error("이미지 불러오던 중 에러", err);
+      alert("이미지 정상적으로 처리되지 않았습니다. " + err.response?.data);
+    });
+};
 </script>
 
 <style scoped>
+.modal-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .button {
   background-color: rgb(19, 152, 254);
   border: none;
@@ -281,6 +318,7 @@ const closeModal = () => {
   grid-template-columns: repeat(5, minmax(0, 1fr));
   grid-template-rows: repeat(8, minmax(0, 1fr));
   height: 500px;
+  width: 800px;
   transition: width 0.3s ease-in-out;
 }
 
@@ -466,10 +504,12 @@ const closeModal = () => {
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
-.content-wrap input {
-  width: 100%;
-  height: 100%;
+.content-wrap textarea {
+  width: 200px;
+  height: 400px;
   padding-top: 0;
+  border: none;
+  outline: none;
 }
 
 .content-wrap {

@@ -97,7 +97,7 @@ const loadPosts = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: black;
+  background-color: white;
   position: relative;
   width: 100%;
   height: 100%;

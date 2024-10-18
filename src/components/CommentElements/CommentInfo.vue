@@ -5,55 +5,43 @@
         <img
           v-show="!isLiked"
           src="/assets/icons/heart-regular.svg"
-          alt=""
+          alt="좋아요 버튼"
           :class="{ bounce: isAnimating }"
         />
         <img
           v-show="isLiked"
           src="/assets/icons/heart-solid.svg"
-          alt=""
+          alt="좋아요 완료 버튼"
           :class="{ bounce: isAnimating }"
         />
       </button>
       <button class="comment" @click="$emit('focusCommentForm')">
-        <img src="/assets/icons/comment.svg" alt="" />
+        <img src="/assets/icons/comment.svg" alt="댓글 버튼" />
       </button>
     </div>
     <div class="info-text-wrap">
       <div class="like">좋아요 {{ likesCount }}개</div>
-      <div class="date">{{ props.timeAgo }}</div>
+      <div class="date">{{ timeAgo }}</div>
     </div>
   </div>
 </template>
 
 <script setup>
 import axios from "axios";
-import { defineProps, watch, ref, onMounted } from "vue";
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 
-const props = defineProps({
-  postId: String,
-  timeAgo: String,
-});
-
-const postId = ref(props.postId);
-const authorToken = window.localStorage.getItem("user_token");
+const route = useRoute();
+const postId = ref(route.params.id);
 const likesCount = ref("0");
 const isLiked = ref(false);
 const isAnimating = ref(false);
 
-watch(
-  () => props.postId,
-  (newPostId) => {
-    postId.value = newPostId;
-    getLikes();
-  }
-);
-
-onMounted(() => {
-  checkLiked();
-});
+const timeAgo = ref("");
 
 const checkLiked = () => {
+  const authorToken = window.localStorage.getItem("user_token");
+
   console.log("좋아요 불러오기 중");
   const likeData = {
     postId: postId.value,
@@ -63,17 +51,17 @@ const checkLiked = () => {
     .post(`/likes/check`, likeData)
     .then((res) => {
       isLiked.value = res.data;
-      console.log("좋값" + res.data);
+      console.log("좋아요 상태: " + res.data);
     })
     .catch((err) => {
       console.error("좋아요 상태 불러오기 에러", err);
-      alert(
-        "좋아요 데이터가 정상적으로 처리되지 않았습니다. " + err.response?.data
-      );
+      alert("좋아요 데이터 불러오기 실패: " + err.response?.data);
     });
 };
 
 const increaseLikes = () => {
+  const authorToken = window.localStorage.getItem("user_token");
+
   isLiked.value = !isLiked.value;
   isAnimating.value = true;
 
@@ -90,15 +78,11 @@ const increaseLikes = () => {
       if (res.data > 0) {
         getLikes();
       }
-      console.log("전송됨", res.data);
+      console.log("좋아요 처리됨", res.data);
     })
     .catch((err) => {
       console.error(err);
-      alert(
-        "글 작성이 정상적으로 처리되지 않았습니다. " +
-          err.data +
-          "관리자에게 문의 바랍니다."
-      );
+      alert("좋아요 처리 실패: " + err.response?.data);
     });
 };
 
@@ -108,14 +92,19 @@ const getLikes = () => {
   axios
     .get(`/likes/${postId.value}`)
     .then((res) => {
-      console.log("좋아요 데이터가 도착했습니다.", res.data);
+      console.log("좋아요 개수: ", res.data);
       likesCount.value = res.data;
     })
     .catch((err) => {
-      console.error("좋아요 불러오던 중 에러", err);
-      alert("글 작성이 정상적으로 처리되지 않았습니다. " + err.response?.data);
+      console.error("좋아요 불러오기 에러", err);
+      alert("좋아요 개수 불러오기 실패: " + err.response?.data);
     });
 };
+
+onMounted(() => {
+  checkLiked();
+  getLikes();
+});
 </script>
 
 <style scoped>

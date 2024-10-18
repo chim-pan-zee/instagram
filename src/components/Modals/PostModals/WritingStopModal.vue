@@ -1,68 +1,27 @@
 <template>
   <div class="modal-bg" @click="closeModal">
-    <div v-if="isNext == false" class="modal-content" @click.stop>
-      <button class="post-update" @click="[updateModal(), closeModal()]">
-        수정
-      </button>
-      <button class="post-delete" @click="isNext = true">삭제</button>
-    </div>
-    <div v-if="isNext == true" class="warning-modal" @click.stop>
+    <div class="warning-modal" @click.stop>
       <h2 class="warning-text">게시물을 삭제할까요?</h2>
       <button>
         <p class="warning-desc">이 게시물을 삭제하시겠어요?</p>
       </button>
-      <button class="delete" @click="deletePost">삭제</button>
+      <button class="delete" @click="closePost">삭제</button>
       <button class="cancle" @click="closeModal">취소</button>
     </div>
   </div>
 </template>
 
 <script setup>
-import axios from "axios";
-import { defineEmits, ref, defineProps } from "vue";
-import { useRouter } from "vue-router";
-const router = useRouter();
+import { defineEmits } from "vue";
 
-const isNext = ref(false);
-
-const emit = defineEmits(["update", "close"]);
+const emit = defineEmits(["close"]);
 
 const closeModal = () => {
   emit("close");
 };
 
-const updateModal = () => {
-  console.log("업데이트 합니다");
-  emit("update");
-};
-
-const props = defineProps({
-  postId: String,
-});
-
-const postId = ref(props.postId);
-
-const deletePost = () => {
-  axios
-    .delete(`/p/${postId.value}`)
-    .then((res) => {
-      if (res.data == true) {
-        closeModal();
-        if (router.currentRoute.value.path === "/") {
-          router.go(0);
-        } else {
-          router.push({
-            path: "/",
-          });
-        }
-      }
-    })
-    .catch((err) => {
-      console.error("지우기 상태 불러오기 에러", err);
-      alert(
-        "지우기 데이터가 정상적으로 처리되지 않았습니다. " + err.response?.data
-      );
-    });
+const closePost = () => {
+  emit("closePost");
 };
 </script>
 

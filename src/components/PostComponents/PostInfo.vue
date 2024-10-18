@@ -59,7 +59,8 @@
 <script setup>
 import axios from "axios";
 import { defineProps, onMounted, ref, watch, defineEmits } from "vue";
-
+import { useRouter } from "vue-router";
+const router = useRouter();
 const props = defineProps({
   userId: String,
   contents: String,
@@ -113,6 +114,8 @@ const increaseLikes = () => {
     .then((res) => {
       if (res.data > 0) {
         getLikes();
+      } else {
+        router.push("/signin");
       }
       console.log("좋아요 전송됨", res.data);
     })

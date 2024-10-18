@@ -40,6 +40,8 @@ import ProfileInfo from "@/components/ProfileComponents/ProfileInfo.vue";
 import DetailViewModal from "@/components/Modals/PostModals/DetailViewModal.vue";
 import axios from "axios";
 import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 const authorToken = window.localStorage.getItem("user_token");
 const currUrl = ref("");
@@ -54,6 +56,10 @@ const isDetailViewModal = ref(false);
 const images = ref([]);
 
 onMounted(() => {
+  if (!authorToken) {
+    router.push("/signin");
+  }
+
   currUrl.value = window.location.href;
   const parts = currUrl.value.split("/");
   userId.value = parts[parts.length - 1];
@@ -61,8 +67,12 @@ onMounted(() => {
   axios
     .get(`/${userId.value}`)
     .then((res) => {
-      userName.value = res.data.USER_NAME;
-      postCount.value = res.data.total;
+      if (res.data != null) {
+        userName.value = res.data.USER_NAME;
+        postCount.value = res.data.total;
+      } else {
+        router.push("/signin");
+      }
     })
     .catch((err) => {
       console.error(err + " 이런 젠장 발사도 안됐다!");
@@ -110,8 +120,8 @@ const closeModal = () => {
   display: grid;
   grid-template-columns: 1fr;
   padding: 3em;
-  max-width: 1200px; /* 최대 폭 설정 */
-  margin: 0 auto; /* 중앙 정렬 */
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .profile-wrap header {

@@ -11,40 +11,48 @@
         <b>계정 설정</b>
       </button>
     </div>
-    <div class="edit-wrap">
-      <div class="user-info">
-        <profile-image></profile-image>
-        <b>{{ userId }}</b>
-        <b>{{ userName }}</b>
-        <button>사진 변경</button>
-      </div>
-      <div>
-        <h3>소개</h3>
-        <input type="text" placeholder="소개" />
-      </div>
-      <div>
-        <h3>성별</h3>
-        <select name="" id="">
-          <option value="">밝히고 싶지 않음</option>
-          <option value="">여성</option>
-          <option value="">남성</option>
-          <option value="">직접 지정</option>
-        </select>
-      </div>
-      <div>
-        <button>제출</button>
-      </div>
-      <div>
-        <h3>계정 비활성화</h3>
-        <b>주의:신중히 결정하십시오.</b>
-        <button>비활성화</button>
-      </div>
+    <div class="user-info">
+      <profile-image class="profile-info"></profile-image>
+      <b>{{ userId }}</b>
+      <b>{{ userName }}</b>
+      <button>사진 변경</button>
+    </div>
+    <div>
+      <h3>소개</h3>
+      <input type="text" placeholder="소개" />
+    </div>
+    <div>
+      <h3>성별</h3>
+      <select name="" id="">
+        <option value="">밝히고 싶지 않음</option>
+        <option value="">여성</option>
+        <option value="">남성</option>
+        <option value="">게이</option>
+      </select>
+    </div>
+    <div>
+      <button>제출</button>
+    </div>
+    <div>
+      <h3>계정 비활성화</h3>
+      <b>주의:신중히 결정하십시오.</b>
+      <button>비활성화</button>
     </div>
   </div>
 </template>
 
 <script setup>
 import ProfileImage from "@/components/ProfileComponents/ProfileImage.vue";
+import { onMounted } from "vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
+
+onMounted(() => {
+  const nowToken = window.localStorage.getItem("user_token");
+  if (!nowToken) {
+    router.push("/signin");
+  }
+});
 </script>
 
 <style>
@@ -56,7 +64,9 @@ button {
 .edit-wrapper {
   display: grid;
   grid-template-columns: repeat(10, minmax(0, 1fr));
-  grid-template-rows: repeat(5, minmax(0, 1fr));
+  grid-template-rows: repeat(6, minmax(0, 0.2fr));
+  padding: 1em;
+  gap: 1em;
 }
 
 .edit-menu-wrap {
@@ -104,4 +114,33 @@ button {
   background: #f6f6f6;
   cursor: pointer;
 }
+
+.edit-account img {
+  width: 10px;
+  height: 10px;
+}
+
+.user-info {
+  grid-column: 4/10;
+  grid-row: 2/3;
+
+  background-color: #f5f5f5;
+  border-radius: 10px;
+
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+
+  padding: 0.5em;
+  gap: 0.5em;
+}
+
+.profile-info {
+  grid-column: 1;
+  grid-row: 1;
+  height: 70px;
+  width: 70px;
+}
+
+
 </style>

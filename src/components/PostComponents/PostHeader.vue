@@ -16,6 +16,7 @@
     </button>
     <post-edit-modal
       @close="controlModal"
+      @update="updatePostModal"
       :postId="props.postId"
       v-if="isModalVisible"
     ></post-edit-modal>
@@ -25,12 +26,19 @@
 <script setup>
 import ProfileImage from "../ProfileComponents/ProfileImage.vue";
 import PostEditModal from "../Modals/PostModals/PostEditModal.vue";
-import { ref, defineProps, onMounted } from "vue";
+import { ref, defineProps, onMounted, defineEmits } from "vue";
 import Cookies from "js-cookie";
 
 const userId = ref("");
 const userUUID = ref("");
 const isModalVisible = ref(false);
+
+const emit = defineEmits(["updatePost"]);
+
+const updatePostModal = () => {
+  console.log("업뎃ㄱ");
+  emit("updatePost");
+};
 
 const props = defineProps({
   userId: String,

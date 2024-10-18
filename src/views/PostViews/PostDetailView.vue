@@ -74,6 +74,8 @@ import { ref, defineEmits, onMounted, onBeforeUnmount } from "vue";
 import axios from "axios";
 
 import { useRoute } from "vue-router";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 const route = useRoute();
 const postId = ref(route.params.id);
@@ -82,6 +84,8 @@ const emit = defineEmits(["uploadComment", "closeModal"]);
 
 const images = ref([]);
 const currentIndex = ref(0);
+
+// const authorToken = window.localStorage.getItem("user_token");
 
 const comments = ref([]);
 const refreshComments = ref(false);
@@ -166,6 +170,12 @@ const getContents = () => {
 };
 
 onMounted(() => {
+  const nowToken = window.localStorage.getItem("user_token");
+
+  if (!nowToken) {
+    router.push("/signin");
+  }
+
   loadPosts();
   disableScroll();
   getContents();

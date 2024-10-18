@@ -1,7 +1,7 @@
 <template>
   <div class="modal-bg" @click.self="closeModal">
     <div class="modal-content">
-      <button class="edit">설정</button>
+      <button class="edit" @click="edit">설정</button>
       <button class="book-mark"></button>
       <button class="mode-switch"></button>
       <button class="report">.</button>
@@ -12,7 +12,12 @@
 
 <script setup>
 import { defineEmits } from "vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
+const edit = () => {
+  router.push("/edit");
+};
 const emit = defineEmits(["close"]);
 
 const closeModal = () => {

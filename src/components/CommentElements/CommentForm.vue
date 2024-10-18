@@ -23,6 +23,8 @@
 import { ref, defineProps, defineEmits, watch } from "vue";
 import ProfileImage from "../ProfileComponents/ProfileImage.vue";
 import axios from "axios";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 const props = defineProps({
   postId: String,
@@ -49,15 +51,19 @@ const uploadComment = () => {
   axios
     .post("/comm", commentData)
     .then((res) => {
-      console.log("전송됨", res.data);
-      emit("uploadedComment");
-      contents.value = "";
-      isDisabled.value = true;
+      if (res.data != false) {
+        console.log("전송됨", res.data);
+        emit("uploadedComment");
+        contents.value = "";
+        isDisabled.value = true;
 
-      setTimeout(() => {
-        isDisabled.value = false;
-        commentRef.value.focus();
-      }, 1000);
+        setTimeout(() => {
+          isDisabled.value = false;
+          commentRef.value.focus();
+        }, 1000);
+      } else {
+        router.push("/signin");
+      }
     })
     .catch((err) => {
       console.error(err);

@@ -24,7 +24,6 @@ import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import MenuList from "./components/MenuComponents/MenuList.vue";
 import MakePostModal from "./components/Modals/PostModals/MakePostModal.vue";
-
 const route = useRoute();
 
 const isAuthPage = computed(() => {
@@ -100,4 +99,3 @@ const closeMakePostModal = () => {
   z-index: 999;
 }
 </style>
-

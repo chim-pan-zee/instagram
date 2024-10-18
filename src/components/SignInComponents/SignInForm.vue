@@ -1,6 +1,8 @@
 <template>
   <div class="login-wrap">
     <div class="login-form">
+      <img src="/assets/icons/instalogo.png" alt="" />
+
       <base-input
         placeholder="이메일, 전화번호, 혹은 사용자 ID"
         class="id-input"
@@ -115,8 +117,13 @@ const signInUser = () => {
   display: grid;
   place-items: center;
 
-  grid-template-rows: repeat(20, minmax(0, 0.2fr));
+  grid-template-rows: repeat(20, minmax(0, 0.05fr));
   /* gap: 20px; */
+}
+
+.login-form img {
+  width: auto;
+  height: 100%;
 }
 
 .id-input {
