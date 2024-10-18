@@ -3,18 +3,30 @@
     <button class="user-profile-img">
       <profile-image class="profile-image"></profile-image>
     </button>
-    <button class="user-id">{{ userId }}</button>
-    <button class="post-option" @click="controlModal">
+    <button class="user-id">
+      {{ userId }}<b> • {{ convertTime(props.createdAt, currentTime) }}</b>
+    </button>
+
+    <button
+      class="post-option"
+      @click="controlModal"
+      v-if="userId == Cookies.get('userId')"
+    >
       <img src="/assets/icons/ellipsis-8.svg" alt="" />
     </button>
-    <base-modal @close="controlModal" v-if="isModalVisible"></base-modal>
+    <post-edit-modal
+      @close="controlModal"
+      :postId="props.postId"
+      v-if="isModalVisible"
+    ></post-edit-modal>
   </div>
 </template>
 
 <script setup>
 import ProfileImage from "../ProfileComponents/ProfileImage.vue";
-import BaseModal from "../BaseElements/BaseModal.vue";
+import PostEditModal from "../Modals/PostModals/PostEditModal.vue";
 import { ref, defineProps, onMounted } from "vue";
+import Cookies from "js-cookie";
 
 const userId = ref("");
 const userUUID = ref("");
@@ -23,6 +35,8 @@ const isModalVisible = ref(false);
 const props = defineProps({
   userId: String,
   userUUID: String,
+  createdAt: String,
+  postId: String,
 });
 
 onMounted(() => {
@@ -32,6 +46,42 @@ onMounted(() => {
 
 const controlModal = () => {
   isModalVisible.value = !isModalVisible.value;
+};
+
+const currentTime = ref(new Date());
+const convertTime = (atTime, currTime) => {
+  if (atTime !== null) {
+    const timeDiff = currTime - new Date(atTime);
+
+    if (timeDiff < 0) {
+      return "지금";
+    }
+
+    const sec = Math.floor(timeDiff / 1000);
+    const min = Math.floor(sec / 60);
+    const hours = Math.floor(min / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days === 0) {
+      if (hours === 0) {
+        if (min === 0) {
+          return sec + "초 전";
+        } else {
+          return min + "분 전";
+        }
+      } else {
+        return hours + "시간 전";
+      }
+    } else if (days === 1) {
+      return "어제";
+    } else if (days < 7) {
+      return days + "일 전";
+    } else {
+      return days / 7 + "주 전";
+    }
+  } else {
+    return "무량공처";
+  }
 };
 </script>
 
@@ -50,11 +100,15 @@ const controlModal = () => {
 }
 
 .user-id {
-  grid-column: 2/ 4;
+  grid-column: 2/ 8;
   text-align: left;
   border: none;
   background: none;
   outline: none;
+}
+
+.user-id b {
+  color: rgb(110, 110, 110);
 }
 
 .post-option {

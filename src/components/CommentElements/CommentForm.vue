@@ -6,6 +6,7 @@
       class="base-input"
       placeholder="댓글 달기..."
       maxlength="1000"
+      ref="commentRef"
     />
     <button
       class="upload"
@@ -25,6 +26,7 @@ import axios from "axios";
 
 const props = defineProps({
   postId: String,
+  focusCommentForm: String,
 });
 
 const emit = defineEmits(["uploadedComment"]);
@@ -32,6 +34,7 @@ const emit = defineEmits(["uploadedComment"]);
 const authorToken = window.localStorage.getItem("user_token");
 const contents = ref("");
 const isDisabled = ref(true);
+const commentRef = ref(null);
 
 watch(contents, (newValue) => {
   isDisabled.value = newValue.trim() === "";
@@ -53,6 +56,7 @@ const uploadComment = () => {
 
       setTimeout(() => {
         isDisabled.value = false;
+        commentRef.value.focus();
       }, 1000);
     })
     .catch((err) => {
@@ -64,6 +68,13 @@ const uploadComment = () => {
       );
     });
 };
+
+watch(
+  () => props.focusCommentForm,
+  () => {
+    commentRef.value.focus();
+  }
+);
 </script>
 
 <style scoped>

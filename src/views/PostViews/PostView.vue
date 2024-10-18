@@ -10,16 +10,20 @@
         <post-header
           :userUUID="post.user_uuid"
           :userId="post.user_id"
+          :created-at="post.created_at"
+          :postId="post.post_uuid"
           class="post-header"
         ></post-header>
         <post-contents
           :postId="post.post_uuid"
           class="post-content fit"
+          @postLike="postLike = !postLike"
         ></post-contents>
         <post-info
           :postId="post.post_uuid"
           :contents="post.content"
           :userId="post.user_id"
+          :postLike="postLike"
           class="post-info"
           @openModal="openModal(post.post_uuid)"
         ></post-info>
@@ -47,6 +51,7 @@ import { onMounted, ref } from "vue";
 const posts = ref([]);
 const isDetailViewModal = ref(false);
 const postId = ref("");
+const postLike = ref(false);
 let isLoading = false;
 let page = ref(0);
 
@@ -141,7 +146,7 @@ const closeModal = () => {
   grid-column: 1;
   grid-row: auto;
   margin-top: 1em;
-  height: 740px;
+  height: 800px;
   background-color: #ffffff;
   padding: 10px;
   border-radius: 5px;

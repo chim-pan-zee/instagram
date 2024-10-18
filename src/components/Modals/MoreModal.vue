@@ -5,7 +5,7 @@
       <button class="book-mark"></button>
       <button class="mode-switch"></button>
       <button class="report">.</button>
-      <button class="sign-out">로그아웃</button>
+      <button class="sign-out" @click="$emit('logOut')">로그아웃</button>
     </div>
   </div>
 </template>

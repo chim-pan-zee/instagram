@@ -110,19 +110,18 @@ const convertTime = (atTime, currTime) => {
     } else if (days < 7) {
       return days + "일 전";
     } else {
-      return days + "주 전";
+      return days / 7 + "주 전";
     }
   } else {
     return "무량공처";
   }
 };
 </script>
-
 <style scoped>
 .comments-wrap {
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
-  gap: 1em;
+  gap: 1em; /* 댓글 간의 간격 */
   padding: 1.5em;
   overflow-y: auto;
   max-height: 400px;
@@ -135,6 +134,7 @@ const convertTime = (atTime, currTime) => {
 }
 
 .comment {
+  height: 70px; /* 고정된 높이로 설정 */
   display: grid;
   grid-template-columns: repeat(16, minmax(0, 1fr));
   grid-template-rows: repeat(2, minmax(0, 1fr));

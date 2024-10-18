@@ -3,7 +3,7 @@
     <div class="user-id">
       <p><slot name="userId">loading</slot></p>
     </div>
-    <base-button class="profile-edit-button" @click="toEdit"
+    <base-button v-if="isMyProfile" class="profile-edit-button" @click="toEdit"
       >프로필 편집</base-button
     >
     <div class="post-count">게시물 <slot name="posts">0</slot></div>
@@ -14,14 +14,51 @@
 </template>
 
 <script setup>
+import { ref, defineProps, watch } from "vue";
 import BaseButton from "../BaseElements/BaseButton.vue";
 import { useRouter } from "vue-router";
+import axios from "axios";
+
+const props = defineProps({
+  userId: String,
+});
 
 const router = useRouter();
+const isMyProfile = ref(false);
 
 const toEdit = () => {
   router.push("/edit");
 };
+
+const checkProfile = () => {
+  const userToken = window.localStorage.getItem("user_token");
+
+  console.log("1" + props.userId + " + " + userToken);
+  axios
+    .get(`/${props.userId}/${userToken}`)
+    .then((res) => {
+      if (res.data == true) {
+        isMyProfile.value = true;
+      }
+    })
+    .catch((err) => {
+      console.error("유저 체크 전송 에러", err);
+      alert(
+        "유저 체크가 정상적으로 처리되지 않았습니다. " +
+          err.response?.data +
+          " 관리자에게 문의 바랍니다."
+      );
+    });
+};
+
+watch(
+  () => props.userId,
+  (newUserId) => {
+    if (newUserId) {
+      checkProfile();
+    }
+  }
+);
 </script>
 
 <style scoped>

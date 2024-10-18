@@ -43,6 +43,7 @@
       class="more-modal"
       v-if="isMoreModalVisible"
       @close="closeMoreModal"
+      @logOut="logOut()"
     />
   </div>
 </template>
@@ -57,15 +58,24 @@ import MoreModal from "@/components/Modals/MoreModal.vue";
 const router = useRouter();
 
 const pushHome = () => {
-  router.push({
-    path: "/",
-  });
+  if (router.currentRoute.value.path === "/") {
+    router.go(0);
+  } else {
+    router.push({
+      path: "/",
+    });
+  }
 };
 
 const pushProfile = () => {
-  const userId = ref(Cookies.get("userId"));
+  const userId = Cookies.get("userId");
 
-  router.push({ name: "profile", params: { id: userId.value } });
+  if (router.currentRoute.value.name === "profile") {
+    router.replace({ name: "profile", params: { id: userId } });
+    window.location.href = `/${userId}`;
+  } else {
+    router.push({ name: "profile", params: { id: userId } });
+  }
 };
 
 const isMoreModalVisible = ref(false);
@@ -77,9 +87,22 @@ const openMoreModal = () => {
 const closeMoreModal = () => {
   isMoreModalVisible.value = false;
 };
+
+const logOut = () => {
+  localStorage.setItem("user_token", null);
+  Cookies.set("userId", null);
+  Cookies.set("userName", null);
+  router.push({
+    path: "/signin",
+  });
+};
 </script>
 
 <style scoped>
+button {
+  outline: none;
+}
+
 .menu-wrap {
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));

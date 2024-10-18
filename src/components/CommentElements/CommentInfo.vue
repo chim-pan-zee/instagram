@@ -15,7 +15,9 @@
           :class="{ bounce: isAnimating }"
         />
       </button>
-      <button></button>
+      <button class="comment" @click="$emit('focusCommentForm')">
+        <img src="/assets/icons/comment.svg" alt="" />
+      </button>
     </div>
     <div class="info-text-wrap">
       <div class="like">좋아요 {{ likesCount }}개</div>
@@ -26,7 +28,7 @@
 
 <script setup>
 import axios from "axios";
-import { defineProps, watch, ref } from "vue";
+import { defineProps, watch, ref, onMounted } from "vue";
 
 const props = defineProps({
   postId: String,
@@ -35,7 +37,7 @@ const props = defineProps({
 
 const postId = ref(props.postId);
 const authorToken = window.localStorage.getItem("user_token");
-const likesCount = ref("");
+const likesCount = ref("0");
 const isLiked = ref(false);
 const isAnimating = ref(false);
 
@@ -46,6 +48,30 @@ watch(
     getLikes();
   }
 );
+
+onMounted(() => {
+  checkLiked();
+});
+
+const checkLiked = () => {
+  console.log("좋아요 불러오기 중");
+  const likeData = {
+    postId: postId.value,
+    authorToken: authorToken,
+  };
+  axios
+    .post(`/likes/check`, likeData)
+    .then((res) => {
+      isLiked.value = res.data;
+      console.log("좋값" + res.data);
+    })
+    .catch((err) => {
+      console.error("좋아요 상태 불러오기 에러", err);
+      alert(
+        "좋아요 데이터가 정상적으로 처리되지 않았습니다. " + err.response?.data
+      );
+    });
+};
 
 const increaseLikes = () => {
   isLiked.value = !isLiked.value;
@@ -155,5 +181,22 @@ const getLikes = () => {
 .date {
   grid-row: 2;
   text-align: left;
+}
+
+.comment {
+  border: none;
+  outline: none;
+  background: none;
+  text-align: left;
+}
+
+.comment:hover {
+  cursor: pointer;
+}
+
+.comment img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
 }
 </style>

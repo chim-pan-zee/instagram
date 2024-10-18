@@ -10,7 +10,11 @@
       <button @click="isNext = true" v-if="images.length && !isNext">
         <p style="color: blue">다음</p>
       </button>
-      <button @click="uploadPost" v-if="images.length && isNext">
+      <button
+        @click="uploadPost"
+        v-if="images.length && isNext"
+        class="upload-excute-button"
+      >
         <p style="color: blue">업로드</p>
       </button>
     </div>
@@ -29,7 +33,6 @@
         multiple
         hidden
         @change="uploadImage"
-        v-if="!images.length"
       />
 
       <img
@@ -48,15 +51,58 @@
       >
         컴퓨터에서 선택
       </base-button>
+
       <div v-if="images.length" class="image-wrap">
-        <img
-          v-for="(img, index) in images"
-          :key="index"
-          :src="img"
-          alt="image"
-          class="full-image"
-        />
-        <button class="add-image-button" v-if="images.length">
+        <div class="full-image-wrap">
+          <img :src="images[currentIndex]" alt="image" class="full-image" />
+          <button
+            class="left-button"
+            @click="previewImage"
+            :disabled="currentIndex === 0"
+          >
+            <img
+              style="width: 100%; height: 100%"
+              src="/assets/icons/leftarrow.png"
+              alt=""
+            />
+          </button>
+          <button
+            class="right-button"
+            @click="nextImage"
+            :disabled="currentIndex === images.length - 1"
+          >
+            <img
+              style="width: 100%; height: 100%"
+              src="/assets/icons/rightarrow.png"
+              alt=""
+            />
+          </button>
+        </div>
+
+        <div v-if="images.length && isAddFiles" class="added-image-wrap">
+          <div
+            v-for="(img, index) in previewImgs"
+            :key="index"
+            class="added-image-container"
+            @click="currentIndex = index"
+          >
+            <img :src="img" alt="이미지 미리보기" class="added-image" />
+            <button class="delete-image" @click="removeImage(index)">X</button>
+          </div>
+          <button class="add-image" @click="clickInputTag">
+            <img
+              style="width: 100%; height: 100%"
+              src="/assets/icons/plusincircle.png"
+              alt=""
+            />
+          </button>
+        </div>
+
+        <button
+          class="add-image-button"
+          v-if="images.length"
+          @click="isAddFiles = !isAddFiles"
+        >
           <img
             class="add-image-icon"
             src="/assets/icons/pi7_copy.svg"
@@ -64,15 +110,16 @@
           />
         </button>
       </div>
-
-      <div v-if="images.length && isNext" class="content-wrap">
-        <div class="right-panel">
-          <input
-            type="text"
-            v-model="contents"
-            placeholder="내용을 입력하세요..."
-          />
-        </div>
+    </div>
+    <!-- 글내용작성 -->
+    <div v-if="images.length && isNext" class="content-wrap">
+      <div class="right-panel">
+        <input
+          type="text"
+          v-model="contents"
+          placeholder="내용을 입력하세요..."
+          maxlength="1000"
+        />
       </div>
     </div>
   </div>
@@ -90,9 +137,12 @@ const router = useRouter();
 const emit = defineEmits(["submit"]);
 
 const images = ref([]);
+const previewImgs = ref([]);
 const imageInput = ref(null);
 const imageFiles = ref([]);
+const isAddFiles = ref(false);
 const isNext = ref(false);
+const currentIndex = ref(0);
 const formData = new FormData();
 
 const userId = ref(Cookies.get("userId"));
@@ -100,7 +150,6 @@ const authorToken = window.localStorage.getItem("user_token");
 const contents = ref("");
 
 const uploadImage = (event) => {
-  console.log("!");
   const files = event.target.files;
   if (files.length > 0) {
     for (let i = 0; i < files.length; i++) {
@@ -110,17 +159,15 @@ const uploadImage = (event) => {
 
       reader.onload = (e) => {
         images.value.push(e.target.result);
+        previewImgs.value.push(e.target.result);
       };
 
       reader.readAsDataURL(image);
     }
-    console.log(files); //잘 옴 파일여러개
   }
 };
 
 const dropInputTag = (event) => {
-  console.log("?");
-
   const files = event.dataTransfer.files;
   if (files.length > 0) {
     uploadImage({ target: { files } });
@@ -128,23 +175,19 @@ const dropInputTag = (event) => {
 };
 
 const clickInputTag = () => {
-  console.log(";;");
-
   if (imageInput.value) {
     imageInput.value.click();
   }
 };
 
 const uploadPost = () => {
-  console.log("k");
-
   const postData = {
     authorToken: authorToken,
     contents: contents.value,
   };
 
   imageFiles.value.forEach((file) => {
-    formData.append("files[]", file);
+    formData.append("files", file);
   });
 
   formData.append(
@@ -158,7 +201,13 @@ const uploadPost = () => {
     })
     .then((res) => {
       closeModal();
-      router.push({ name: "profile", params: { id: userId.value } });
+      if (router.currentRoute.value.path === "/") {
+        router.go(0);
+      } else {
+        router.push({
+          path: "/",
+        });
+      }
       console.log("전송됨", res.data);
     })
     .catch((err) => {
@@ -169,6 +218,23 @@ const uploadPost = () => {
           "관리자에게 문의 바랍니다."
       );
     });
+};
+
+const previewImage = () => {
+  if (currentIndex.value > 0) {
+    currentIndex.value--;
+  }
+};
+
+const removeImage = (index) => {
+  images.value.splice(index, 1);
+  previewImgs.value.splice(index, 1);
+};
+
+const nextImage = () => {
+  if (currentIndex.value < images.value.length - 1) {
+    currentIndex.value++;
+  }
 };
 
 const closeModal = () => {
@@ -268,24 +334,77 @@ const closeModal = () => {
   grid-row: 1 / 13;
   width: 100%;
   height: auto;
-
+  position: relative;
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 0.2fr));
   grid-template-rows: repeat(12, minmax(0, 0.2fr));
 }
 
-.image-wrap img {
-  width: 100%;
-  height: 100%;
+.added-image-wrap {
+  position: absolute;
+  bottom: 50px;
+  right: 10%;
+  width: 70%;
+  height: 110px;
+  display: flex;
+  overflow-x: auto;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.547);
+  border-radius: 5px;
+}
+
+.full-image-wrap {
   grid-column: 1 / 13;
   grid-row: 1 / 13;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
 .full-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.left-button,
+.right-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  background: none;
+  opacity: 0.83;
+}
+
+.left-button {
+  left: 10px;
+}
+
+.right-button {
+  right: 10px;
+}
+
+.left-button:disabled,
+.right-button:disabled {
+  opacity: 0;
+  cursor: default;
+}
+
+.add-image {
+  background: none;
+  width: 30px;
+  height: 30px;
+  outline: none;
+  border: none;
+}
+
+.add-image:hover {
+  cursor: pointer;
 }
 
 .add-image-button {
@@ -314,8 +433,9 @@ const closeModal = () => {
 }
 
 .right-panel {
-  grid-column: 6 / 7;
+  grid-column: 5 / 6;
   grid-row: 2 / 9;
+  justify-self: end;
 }
 
 .content-wrap {
@@ -323,12 +443,38 @@ const closeModal = () => {
   grid-row: 1 / 9;
 }
 
-.content-wrap input {
-  grid-column: 1 / 6;
-  grid-row: 1 / 9;
-  width: 100%;
-  border: 1px solid rgb(191, 191, 191);
-  border-radius: 5px;
-  padding: 8px;
+.added-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  margin-right: 10px;
+
+  overflow: scroll;
+  overflow: auto;
+  white-space: nowrap;
+}
+
+.added-image-wrap::-webkit-scrollbar {
+  height: 8px;
+}
+
+.added-image-container {
+  position: relative;
+}
+
+.delete-image {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 999px;
+}
+
+.upload-excute-button {
+  z-index: 1000;
 }
 </style>

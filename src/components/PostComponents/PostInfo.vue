@@ -28,16 +28,37 @@
       <b style="font-weight: 600; font-size: 11pt">{{ userId }}</b>
       {{ contents }}
     </div>
+    <div
+      class="comment-count"
+      v-if="commentCount > 0"
+      @click="$emit('openModal')"
+    >
+      <b>댓글 {{ commentCount }}개 모두 보기</b>
+    </div>
     <div class="comment-form">
-      <input type="text" placeholder="댓글 달기..." />
-      <button>전송</button>
+      <input
+        type="text"
+        placeholder="댓글 달기..."
+        maxlength="1000"
+        ref="commentRef"
+        v-model="comment"
+      />
+      <button
+        v-if="comment"
+        class="upload"
+        :class="{ disabled: isDisabled }"
+        @click="uploadComment"
+        :disabled="isDisabled"
+      >
+        게시
+      </button>
     </div>
   </div>
 </template>
 
 <script setup>
 import axios from "axios";
-import { defineProps, onMounted, ref, watch } from "vue";
+import { defineProps, onMounted, ref, watch, defineEmits } from "vue";
 
 const props = defineProps({
   userId: String,
@@ -45,8 +66,12 @@ const props = defineProps({
   postId: String,
 });
 
+const emit = defineEmits(["uploadedComment"]);
+
 onMounted(() => {
   getLikes();
+  checkLiked();
+  getCommentCount();
 });
 
 const userId = ref(props.userId);
@@ -54,8 +79,14 @@ const contents = ref(props.contents);
 const postId = ref(props.postId);
 const authorToken = window.localStorage.getItem("user_token");
 const likesCount = ref("");
+const commentCount = ref("");
 const isLiked = ref(false);
 const isAnimating = ref(false);
+const isDisabled = ref(false);
+
+const comment = ref("");
+
+const commentRef = ref("");
 
 watch(
   () => props.postId,
@@ -96,8 +127,6 @@ const increaseLikes = () => {
 };
 
 const getLikes = () => {
-  console.log("좋아요 가져오기: " + postId.value);
-
   axios
     .get(`/likes/${postId.value}`)
     .then((res) => {
@@ -111,13 +140,76 @@ const getLikes = () => {
       );
     });
 };
+
+const getCommentCount = () => {
+  axios
+    .get(`/comment/${postId.value}`)
+    .then((res) => {
+      console.log("좋아요 데이터가 도착했습니다.", res.data);
+      commentCount.value = res.data;
+    })
+    .catch((err) => {
+      console.error("좋아요 불러오기 에러", err);
+      alert(
+        "좋아요 데이터가 정상적으로 처리되지 않았습니다. " + err.response?.data
+      );
+    });
+};
+
+const checkLiked = () => {
+  console.log("좋아요 불러오기 중");
+  const likeData = {
+    postId: postId.value,
+    authorToken: authorToken,
+  };
+  axios
+    .post(`/likes/check`, likeData)
+    .then((res) => {
+      isLiked.value = res.data;
+    })
+    .catch((err) => {
+      console.error("좋아요 상태 불러오기 에러", err);
+      alert(
+        "좋아요 데이터가 정상적으로 처리되지 않았습니다. " + err.response?.data
+      );
+    });
+};
+
+const uploadComment = () => {
+  const commentData = {
+    authorToken: authorToken,
+    postId: props.postId,
+    contents: comment.value,
+  };
+
+  axios
+    .post("/comm", commentData)
+    .then((res) => {
+      console.log("전송됨", res.data);
+      isDisabled.value = true;
+      emit("uploadedComment", comment.value);
+      setTimeout(() => {
+        isDisabled.value = false;
+        commentRef.value.focus();
+      }, 1000);
+      comment.value = "";
+    })
+    .catch((err) => {
+      console.error(err);
+      alert(
+        "글 작성이 정상적으로 처리되지 않았습니다. " +
+          err.data +
+          "관리자에게 문의 바랍니다."
+      );
+    });
+};
 </script>
 
 <style>
 .post-info {
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
-  grid-template-rows: repeat(5, minmax(0, 1fr));
+  grid-template-rows: repeat(6, minmax(0, 1fr));
   padding-top: 0.5em;
   gap: 0.5em;
 }
@@ -141,8 +233,19 @@ const getLikes = () => {
   text-align: left;
 }
 
-.comment-form {
+.comment-count {
   grid-row: 4;
+  text-align: left;
+  color: #939393;
+  background: none;
+}
+
+.comment-count:hover {
+  cursor: pointer;
+}
+
+.comment-form {
+  grid-row: 5;
   display: grid;
   grid-template-columns: repeat(13, minmax(0, 1fr));
   grid-template-rows: repeat(1, minmax(0, 1fr));
@@ -222,5 +325,19 @@ const getLikes = () => {
   100% {
     transform: scale(1);
   }
+}
+
+.upload:hover {
+  cursor: pointer;
+}
+
+.upload.disabled {
+  color: rgb(146, 208, 255);
+  cursor: default;
+}
+
+.upload:disabled {
+  color: rgb(146, 208, 255);
+  cursor: default;
 }
 </style>

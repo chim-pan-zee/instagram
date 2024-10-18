@@ -1,6 +1,10 @@
 <template>
   <div class="app-wrapper">
-    <menu-list class="menu-list" @open-modal="openMakePostModal"></menu-list>
+    <menu-list
+      class="menu-list"
+      v-if="!isAuthPage"
+      @open-modal="openMakePostModal"
+    />
     <router-view class="router-view" />
     <make-post-modal
       class="make-post-modal"
@@ -16,15 +20,25 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { useRoute } from "vue-router";
 import MenuList from "./components/MenuComponents/MenuList.vue";
 import MakePostModal from "./components/Modals/PostModals/MakePostModal.vue";
 
+const route = useRoute();
+
+const isAuthPage = computed(() => {
+  return route.path === "/signin" || route.path === "/signup";
+});
+
 const isMakePostModal = ref(false);
+let scrollPosition = 0;
 
 const openMakePostModal = () => {
+  scrollPosition = window.scrollY;
   isMakePostModal.value = true;
   document.body.style.position = "fixed";
+  document.body.style.top = `-${scrollPosition}px`;
   document.body.style.width = "100%";
   document.body.style.overflowY = "scroll";
 };
@@ -32,11 +46,12 @@ const openMakePostModal = () => {
 const closeMakePostModal = () => {
   isMakePostModal.value = false;
   document.body.style.position = "";
+  document.body.style.top = "";
   document.body.style.width = "";
   document.body.style.overflowY = "";
+  window.scrollTo(0, scrollPosition);
 };
 </script>
-
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -85,3 +100,4 @@ const closeMakePostModal = () => {
   z-index: 999;
 }
 </style>
+

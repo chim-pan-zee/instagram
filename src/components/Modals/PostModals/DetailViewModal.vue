@@ -2,16 +2,35 @@
   <div class="modal-bg" @click="closeModal">
     <div class="modal-wrap" @click.stop>
       <div class="detail-img-wrap">
-        <div
-          class="detail-post-img fit"
-          v-for="post in posts"
-          :key="post.file_idx"
-        >
+        <div class="detail-img fit">
           <img
-            class="fit"
-            :src="`/upload/${post.file_name}`"
-            :alt="post.file_name"
+            v-if="images.length > 0 && images[currentIndex]"
+            :src="`/upload/${images[currentIndex].file_name}`"
+            alt="image"
+            class="full-image fit"
           />
+          <button
+            class="left-button"
+            @click="previewImage"
+            :disabled="currentIndex === 0"
+          >
+            <img
+              style="width: 100%; height: 100%"
+              src="/assets/icons/leftarrow.png"
+              alt=""
+            />
+          </button>
+          <button
+            class="right-button"
+            @click="nextImage"
+            :disabled="currentIndex === images.length - 1"
+          >
+            <img
+              style="width: 100%; height: 100%"
+              src="/assets/icons/rightarrow.png"
+              alt=""
+            />
+          </button>
         </div>
       </div>
       <div class="contents-wrap">
@@ -32,9 +51,11 @@
           :postId="postId"
           :timeAgo="timeAgo"
           class="info"
+          @focusCommentForm="focusCommentForm = true"
         ></comment-info>
         <comment-form
           :postId="postId"
+          :focusCommentForm="focusCommentForm"
           class="comment-input"
           @uploaded-comment="handleCommentSubmit"
         ></comment-form>
@@ -50,12 +71,16 @@ import CommentInfo from "../../CommentElements/CommentInfo.vue";
 import CommentForm from "../../CommentElements/CommentForm.vue";
 
 import { ref, defineProps, defineEmits, onMounted, onBeforeUnmount } from "vue";
+
 import axios from "axios";
 
 const props = defineProps({
   postId: String,
 });
 const emit = defineEmits(["uploadComment", "closeModal"]);
+
+const images = ref([]);
+const currentIndex = ref(0);
 
 const postId = ref("");
 const comments = ref([]);
@@ -65,8 +90,7 @@ const timeAgo = ref("");
 const userId = ref("");
 const contents = ref("");
 const postcreatedAt = ref("");
-
-const posts = ref([]);
+const focusCommentForm = ref(false);
 
 let scrollY = 0;
 
@@ -112,7 +136,7 @@ const convertTime = (atTime, currTime) => {
     } else if (days < 7) {
       timeAgo.value = days + "일 전";
     } else {
-      timeAgo.value = days + "주 전";
+      timeAgo.value = days / 7 + "주 전";
     }
   } else {
     timeAgo.value = "무량공처";
@@ -157,8 +181,13 @@ const loadPosts = () => {
   axios
     .get(`/p/file/${postId.value}`)
     .then((res) => {
-      posts.value = res.data;
+      images.value = res.data;
       console.log("이미지 데이터가 도착했습니다.", res.data);
+      console.log("인덱스" + currentIndex.value);
+      console.log(
+        "사진 데이터가 도착했습니다.",
+        images.value[currentIndex.value]?.file_name
+      );
     })
     .catch((err) => {
       console.error("이미지 불러오던 중 에러", err);
@@ -178,6 +207,17 @@ const handleCommentSubmit = (newComment) => {
   setTimeout(() => {
     refreshComments.value = false;
   }, 1000);
+};
+
+const previewImage = () => {
+  if (currentIndex.value > 0) {
+    currentIndex.value--;
+  }
+};
+const nextImage = () => {
+  if (currentIndex.value < images.value.length - 1) {
+    currentIndex.value++;
+  }
 };
 </script>
 
@@ -259,8 +299,52 @@ const handleCommentSubmit = (newComment) => {
 .detail-post-img img {
   width: 100%;
   height: auto;
-  max-height: 600px; /* 원하는 최대 세로 길이 (예: 300px) */
+  max-height: 600px;
   border: none;
   align-content: center;
+}
+
+.detail-img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.detail-img img {
+  width: 100%;
+  height: 600px;
+  object-fit: cover;
+}
+
+.left-button,
+.right-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  background: none;
+  opacity: 0.83;
+}
+
+.left-button {
+  left: 10px;
+}
+
+.right-button {
+  right: 10px;
+}
+
+.left-button:disabled,
+.right-button:disabled {
+  opacity: 0;
+  cursor: default;
 }
 </style>

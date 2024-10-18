@@ -3,9 +3,9 @@
     <header>
       <profile-image class="profile-image"></profile-image>
 
-      <profile-info class="profile-info">
+      <profile-info class="profile-info" :userId="userId">
         <template #userId>{{ userId }}</template>
-        <template #posts></template>
+        <template #posts>{{ postCount }}</template>
         <template #followers></template>
         <template #follows></template>
         <template #userName>{{ userName }}</template>
@@ -48,6 +48,7 @@ const userName = ref("");
 const postId = ref("");
 const imagePath = ref("");
 const createdAt = ref("");
+const postCount = ref("");
 
 const isDetailViewModal = ref(false);
 const images = ref([]);
@@ -61,6 +62,7 @@ onMounted(() => {
     .get(`/${userId.value}`)
     .then((res) => {
       userName.value = res.data.USER_NAME;
+      postCount.value = res.data.total;
     })
     .catch((err) => {
       console.error(err + " 이런 젠장 발사도 안됐다!");

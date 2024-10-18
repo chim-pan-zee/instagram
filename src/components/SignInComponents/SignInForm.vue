@@ -73,8 +73,8 @@ const signInUser = () => {
       .post("/signin", signInData)
       .then((res) => {
         localStorage.setItem("user_token", res.data.user_token);
-        Cookies.set("userId", res.data.user_id, { expires: 7, path: "" });
-        Cookies.set("userName", res.data.user_name, { expires: 7, path: "" });
+        Cookies.set("userId", res.data.user_id, { path: "" });
+        Cookies.set("userName", res.data.user_name, { path: "" });
         console.log("전송됨", res.data);
         console.log("쿠키:" + Cookies.get("userId"));
         console.log("토큰:" + localStorage.getItem("user_token"));
@@ -99,7 +99,7 @@ const signInUser = () => {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   grid-template-rows: repeat(12, minmax(0, 0.2fr));
-  gap: 20px;
+  gap: 1em;
 }
 
 .login-form {
@@ -120,14 +120,31 @@ const signInUser = () => {
 }
 
 .id-input {
-  grid-row: 5;
+  grid-row: 2/5;
 }
 
 .pw-input {
-  grid-row: 9;
+  grid-row: 6/9;
 }
 
+input {
+  border-width: 1px;
+  border-radius: 5px;
+  background-color: rgb(230, 230, 230);
+  border-color: rgb(192, 192, 192);
+  width: 70%;
+  height: 100%;
+  outline: none;
+  border-style: solid;
+}
 .submit-button {
-  grid-row: 13;
+  background-color: rgb(55, 162, 255);
+  width: 70%;
+  height: 100%;
+  border-radius: 10px;
+  font-size: 13pt;
+  font-weight: 700;
+  color: white;
+  grid-row: 10/13;
 }
 </style>
