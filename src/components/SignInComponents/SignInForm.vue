@@ -46,11 +46,11 @@ const userPassword = ref("");
 const inputCheck = (inputType) => {
   if (inputType == "userName") {
     if (emailPattern.test(userName.value) === true) {
-      userNameType.value = "user_email";
+      userNameType.value = "email";
     } else if (phonePattern.test(userName.value) === true) {
-      userNameType.value = "user_phone";
+      userNameType.value = "phone";
     } else if (idPattern.test(userName.value) === true) {
-      userNameType.value = "user_id";
+      userNameType.value = "username";
     } else {
       console.log("그 무엇도 아님");
     }
@@ -75,10 +75,10 @@ const signInUser = () => {
       .post("/signin", signInData)
       .then((res) => {
         localStorage.setItem("user_token", res.data.user_token);
-        Cookies.set("userId", res.data.user_id, { path: "" });
-        Cookies.set("userName", res.data.user_name, { path: "" });
+        Cookies.set("username", res.data.username, { path: "" });
+        Cookies.set("name", res.data.name, { path: "" });
         console.log("전송됨", res.data);
-        console.log("쿠키:" + Cookies.get("userId"));
+        console.log("쿠키:" + Cookies.get("username"));
         console.log("토큰:" + localStorage.getItem("user_token"));
         router.push("/");
       })

@@ -3,12 +3,12 @@
     <header>
       <profile-image class="profile-image"></profile-image>
 
-      <profile-info class="profile-info" :userId="userId">
-        <template #userId>{{ userId }}</template>
+      <profile-info class="profile-info" :username="username">
+        <template #username>{{ username }}</template>
         <template #posts>{{ postCount }}</template>
         <template #followers></template>
         <template #follows></template>
-        <template #userName>{{ userName }}</template>
+        <template #realname>{{ realname }}</template>
       </profile-info>
     </header>
 
@@ -45,8 +45,8 @@ const router = useRouter();
 
 const authorToken = window.localStorage.getItem("user_token");
 const currUrl = ref("");
-const userId = ref("");
-const userName = ref("");
+const username = ref("");
+const realname = ref("");
 const postId = ref("");
 const imagePath = ref("");
 const createdAt = ref("");
@@ -62,13 +62,13 @@ onMounted(() => {
 
   currUrl.value = window.location.href;
   const parts = currUrl.value.split("/");
-  userId.value = parts[parts.length - 1];
+  username.value = parts[parts.length - 1];
 
   axios
-    .get(`/${userId.value}`)
+    .get(`/${username.value}`)
     .then((res) => {
       if (res.data != null) {
-        userName.value = res.data.USER_NAME;
+        realname.value = res.data.NAME;
         postCount.value = res.data.total;
       } else {
         router.push("/signin");
@@ -79,7 +79,7 @@ onMounted(() => {
     });
 
   const infoData = {
-    userId: userId.value,
+    username: username.value,
     userToken: authorToken,
   };
 
@@ -90,7 +90,7 @@ onMounted(() => {
   );
 
   axios
-    .post("/info", formData, {
+    .post(`/${username.value}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     })
     .then((res) => {
@@ -111,7 +111,7 @@ const openModal = (id, path, time) => {
 
 const closeModal = () => {
   isDetailViewModal.value = false;
-  window.history.pushState(null, "", `/${userId.value}`);
+  window.history.pushState(null, "", `/${username.value}`);
 };
 </script>
 

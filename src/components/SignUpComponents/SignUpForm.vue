@@ -119,7 +119,7 @@ const inputCheck = async (inputType) => {
   } else if (inputType === "userId") {
     if (idPattern.test(userId.value)) {
       console.log("1단계통과");
-      await dupeCheck("user_id", userId.value);
+      await dupeCheck("username", userId.value);
       console.log("2단계통과");
     } else {
       userIdError.value = "경고:사용할 수 없는 사용자 이름입니다.";

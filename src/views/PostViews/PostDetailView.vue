@@ -147,7 +147,7 @@ const getContents = () => {
     .get(`/p/${postId.value}`)
     .then((res) => {
       console.log("콘텐츠 받음:", res.data);
-      userId.value = res.data.user_id;
+      userId.value = res.data.username;
       contents.value = res.data.content;
       postcreatedAt.value = res.data.created_at;
       if (res.data.created_at) {

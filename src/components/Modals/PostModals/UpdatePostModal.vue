@@ -2,7 +2,6 @@
   <div class="modal-bg">
     <div :class="['modal-wrap', { 'expanded-modal': isNext }]">
       <div class="text-wrap">
-        <p class="text" v-if="isLoaded == false">새 게시물 만들기</p>
         <p class="text" v-if="isLoaded == true && !isNext">이미지 수정</p>
         <p class="text" v-if="images.length && isNext">게시물 수정</p>
 
@@ -37,23 +36,6 @@
           hidden
           @change="uploadImage"
         />
-
-        <img
-          class="upload-icon"
-          src="/assets/icons/img-n-video.png"
-          alt="upload icon"
-          v-if="!images.length"
-        />
-        <p class="upload-text" v-if="!images.length">
-          사진과 동영상을 여기에 끌어다 놓으세요
-        </p>
-        <base-button
-          class="upload-button"
-          @click="clickInputTag"
-          v-if="!images.length"
-        >
-          컴퓨터에서 선택
-        </base-button>
 
         <div v-if="images.length" class="image-wrap">
           <div class="full-image-wrap">
@@ -138,7 +120,6 @@
 
 <script setup>
 import axios from "axios";
-import BaseButton from "../../BaseElements/BaseButton.vue";
 import { ref, defineEmits, defineProps, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import Cookies from "js-cookie";
@@ -193,12 +174,6 @@ const dropInputTag = (event) => {
   const files = event.dataTransfer.files;
   if (files.length > 0) {
     uploadImage({ target: { files } });
-  }
-};
-
-const clickInputTag = () => {
-  if (imageInput.value) {
-    imageInput.value.click();
   }
 };
 

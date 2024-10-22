@@ -95,10 +95,17 @@
             v-for="(img, index) in previewImgs"
             :key="index"
             class="added-image-container"
-            @click="currentIndex = index"
+            @click="selectedImage(index)"
           >
             <img :src="img" alt="이미지 미리보기" class="added-image" />
-            <button class="delete-image" @click="removeImage(index)">X</button>
+            <button
+              :id="`preview-${index}`"
+              class="delete-image"
+              @click="removeImage(index)"
+              disabled
+            >
+              X
+            </button>
           </div>
           <button class="add-image" @click="clickInputTag">
             <!-- <img
@@ -184,6 +191,46 @@ const uploadImage = (event) => {
       reader.readAsDataURL(image);
     }
   }
+};
+
+//해당 이미지만 x표시가 나타나고 나머지 파일들에는 x표시가 나타나지 않아야 함.
+//해당 인덱스만 x표시가 나타나도록 해야 함.
+//v-for를 통해서 x표시는 복사되어 있음.
+//현재 v-for를 통해서 아이디는 preview-1, 2, 3...이런 식으로 나열되어 있음.
+//이중 클릭 시 selectedimage 함수를 통해 클릭한 함수의 inex가 나에게 전달됨.
+//previewId const변수를 통해 누른 것의 id를 추출할 수 있음.
+
+//다른 버튼을 눌렀을 시 기존에 존재하던 id의 스타일값을 원래대로 되돌려야 한다.
+//우선 이전 id를 저장한다. 이후 다음 id가 들어왔을 시 우선적으로 이전 id의 스타일을 기존대로 변경한다.
+//이후 새롭게 들어온 id의 스타일을 변경한다. 해당 기능은 watch 함수를 통해 사용할 수 있을 것으로 생각된다.
+//watch가 아니라 그냥 async를 사용하면 된다.
+
+const previewId = ref("");
+const beforePreviewId = ref("");
+
+const selectedImage = (index) => {
+  if (beforePreviewId.value) {
+    const beforePreviewImage = document.getElementById(beforePreviewId.value);
+    if (beforePreviewImage) {
+      beforePreviewImage.style.background = "none";
+      beforePreviewImage.style.opacity = "0";
+      document
+        .getElementById(beforePreviewId.value)
+        .setAttribute("disabled", true);
+    }
+  }
+
+  currentIndex.value = index;
+  previewId.value = `preview-${index}`;
+  const previewImage = document.getElementById(previewId.value);
+  if (previewImage) {
+    document.getElementById(previewId.value).removeAttribute("disabled");
+    previewImage.style.background = "transparent";
+    previewImage.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+    previewImage.style.opacity = "1";
+  }
+
+  beforePreviewId.value = previewId.value;
 };
 
 const dropInputTag = (event) => {
@@ -514,12 +561,12 @@ const closeModal = () => {
   position: absolute;
   top: 5px;
   right: 5px;
-  background: transparent;
+  background: none;
   border: none;
-  color: white;
   cursor: pointer;
-  background-color: rgba(0, 0, 0, 0.8);
   border-radius: 999px;
+  opacity: 0;
+  color: white;
 }
 
 .upload-excute-button {

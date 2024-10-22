@@ -9,7 +9,7 @@
       >
         <post-header
           :userUUID="post.user_uuid"
-          :userId="post.user_id"
+          :userId="post.username"
           :created-at="post.created_at"
           :postId="post.post_uuid"
           @updatePost="openUpdateModal(post.post_uuid, post.post_content)"
@@ -23,7 +23,7 @@
         <post-info
           :postId="post.post_uuid"
           :contents="post.content"
-          :userId="post.user_id"
+          :userId="post.username"
           :postLike="postLike"
           class="post-info"
           @openModal="openModal(post.post_uuid)"

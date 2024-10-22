@@ -3,7 +3,7 @@
     <div class="comment" v-for="(comment, index) in comments" :key="index">
       <profile-image></profile-image>
       <div class="author-id">
-        <span class="bold">{{ comment.user_id }}</span>
+        <span class="bold">{{ comment.username }}</span>
         {{ comment.contents }}
       </div>
       <div class="comment-time">
@@ -62,7 +62,7 @@ const getComments = () => {
         } else {
           comments.value = [
             {
-              user_id: props.author,
+              username: props.author,
               contents: props.contents,
               created_at: props.postcreatedAt,
             },

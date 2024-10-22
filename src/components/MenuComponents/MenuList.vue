@@ -68,13 +68,13 @@ const pushHome = () => {
 };
 
 const pushProfile = () => {
-  const userId = Cookies.get("userId");
+  const username = Cookies.get("username");
 
   if (router.currentRoute.value.name === "profile") {
-    router.replace({ name: "profile", params: { id: userId } });
-    window.location.href = `/${userId}`;
+    router.replace({ name: "profile", params: { id: username } });
+    window.location.href = `/${username}`;
   } else {
-    router.push({ name: "profile", params: { id: userId } });
+    router.push({ name: "profile", params: { id: username } });
   }
 };
 
@@ -90,8 +90,8 @@ const closeMoreModal = () => {
 
 const logOut = () => {
   localStorage.setItem("user_token", null);
-  Cookies.set("userId", null);
-  Cookies.set("userName", null);
+  Cookies.set("username", null);
+  Cookies.set("name", null);
   router.push({
     path: "/signin",
   });

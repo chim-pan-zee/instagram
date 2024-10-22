@@ -1,7 +1,7 @@
 <template>
   <div class="profile-info-wrap">
     <div class="user-id">
-      <p><slot name="userId">loading</slot></p>
+      <p><slot name="username">loading</slot></p>
     </div>
     <base-button v-if="isMyProfile" class="profile-edit-button" @click="toEdit"
       >프로필 편집</base-button
@@ -9,7 +9,7 @@
     <div class="post-count">게시물 <slot name="posts">0</slot></div>
     <div class="followers">팔로워 <slot name="followers">0</slot></div>
     <div class="follows">팔로우 <slot name="follows">0</slot></div>
-    <div class="user-name"><slot name="userName">로딩중</slot></div>
+    <div class="user-name"><slot name="user-name">로딩중</slot></div>
   </div>
 </template>
 
@@ -20,7 +20,7 @@ import { useRouter } from "vue-router";
 import axios from "axios";
 
 const props = defineProps({
-  userId: String,
+  username: String,
 });
 
 const router = useRouter();
@@ -33,9 +33,9 @@ const toEdit = () => {
 const checkProfile = () => {
   const userToken = window.localStorage.getItem("user_token");
 
-  console.log("1" + props.userId + " + " + userToken);
+  console.log("1" + props.username + " + " + userToken);
   axios
-    .get(`/${props.userId}/${userToken}`)
+    .get(`/${props.username}/${userToken}`)
     .then((res) => {
       if (res.data == true) {
         isMyProfile.value = true;
@@ -52,7 +52,7 @@ const checkProfile = () => {
 };
 
 watch(
-  () => props.userId,
+  () => props.username,
   (newUserId) => {
     if (newUserId) {
       checkProfile();
@@ -64,9 +64,8 @@ watch(
 <style scoped>
 .profile-info-wrap {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  grid-template-rows: repeat(8, minmax(0, 1fr));
-
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 10px;
   align-items: center;
 }
 
