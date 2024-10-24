@@ -143,7 +143,6 @@ const closeModal = () => {
 };
 </script>
 
-해당 코드에서, v-for의 post의 댓글을 눌러
 
 <style>
 .observer-target {

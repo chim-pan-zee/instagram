@@ -118,8 +118,7 @@ const convertTime = (atTime, currTime) => {
 };
 </script>
 
-이 코드는 :fileName으로 신호를 보내지 않는다. v-for의 프로필-이미지들이 저마다
-props를 계속해서 보낼수있게하시오.
+
 <style scoped>
 .comments-wrap {
   display: grid;

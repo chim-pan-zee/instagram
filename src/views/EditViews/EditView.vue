@@ -50,11 +50,16 @@
     </div>
     <div class="user-desc">
       <h3>소개</h3>
-      <input type="text" placeholder="소개" v-model="userDesc" />
+      <input
+        type="text"
+        placeholder="소개"
+        :value="userDesc"
+        @input="userDesc = $event.target.value"
+      />
     </div>
     <div class="user-gender">
       <h3>성별</h3>
-      <select name="" id="" v-model="gender">
+      <select name="" id="" v-model="gender" :value="gender">
         <option value="">밝히고 싶지 않음</option>
         <option value="1">여성</option>
         <option value="2">남성</option>
@@ -88,6 +93,7 @@ const fileInput = ref();
 const defaultImg = ref(true);
 const localImg = ref(false);
 const fileName = ref("");
+// const beforeUserDesc = ref("");
 
 const userDesc = ref("");
 const gender = ref("");
@@ -103,7 +109,7 @@ onMounted(() => {
   username.value = Cookies.get("username");
   name.value = Cookies.get("name");
 
-  getUserProfileImage(username.value);
+  getUserProfile(username.value);
 });
 
 const triggerFileUpload = () => {
@@ -149,7 +155,7 @@ const uploadUser = async () => {
     });
 };
 
-const getUserProfileImage = (username) => {
+const getUserProfile = (username) => {
   console.log(username);
   axios
     .get(`/file/${username}`)
@@ -158,6 +164,20 @@ const getUserProfileImage = (username) => {
         localImg.value = false;
         Cookies.set("fileName", res.data);
         fileName.value = res.data;
+      }
+      console.log("이미지 데이터가 도착했습니다.", res.data);
+    })
+    .catch((err) => {
+      console.error("이미지 불러오던 중 에러", err);
+      alert("이미지 정상적으로 처리되지 않았습니다. " + err.response?.data);
+    });
+
+  axios
+    .get(`/${username}`)
+    .then((res) => {
+      if (res.data != null) {
+        userDesc.value = res.data.description;
+        gender.value = res.data.gender;
       }
       console.log("이미지 데이터가 도착했습니다.", res.data);
     })
