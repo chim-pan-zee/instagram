@@ -44,12 +44,13 @@ watch(
 );
 
 const getUserProfileImage = (username) => {
+  console.log("프로필사진이름왔습니다", username);
   axios
     .get(`/file/${username}`)
     .then((res) => {
       if (res.data != null) {
         fileName.value = res.data;
-        console.log("넓입니다" + res.data);
+        console.log("받았습니다", res.data);
       } else {
         fileName.value = "";
         console.log("넓입니다" + res.data);

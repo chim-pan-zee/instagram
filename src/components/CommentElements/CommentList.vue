@@ -4,7 +4,7 @@
       <profile-image :filename="comment.username"></profile-image>
       <div class="author-id">
         <span class="bold">{{ comment.username }}</span>
-        {{ comment.contents }}
+        {{ comment.content }}
       </div>
       <div class="comment-time">
         {{ convertTime(comment.created_at, currentTime) }}
@@ -20,7 +20,7 @@ import ProfileImage from "../ProfileComponents/ProfileImage.vue";
 
 const props = defineProps({
   postId: String,
-  contents: String,
+  content: String,
   refreshComments: Boolean,
   author: String,
   postcreatedAt: String,
@@ -63,7 +63,7 @@ const getComments = () => {
           comments.value = [
             {
               username: props.author,
-              contents: props.contents,
+              content: props.content,
               created_at: props.postcreatedAt,
             },
             ...res.data,
@@ -117,6 +117,9 @@ const convertTime = (atTime, currTime) => {
   }
 };
 </script>
+
+이 코드는 :fileName으로 신호를 보내지 않는다. v-for의 프로필-이미지들이 저마다
+props를 계속해서 보낼수있게하시오.
 <style scoped>
 .comments-wrap {
   display: grid;

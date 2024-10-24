@@ -46,7 +46,7 @@
         <comment-list
           :postId="postId"
           :comments="comments"
-          :contents="contents"
+          :content="content"
           :author="userId"
           :postcreatedAt="postcreatedAt"
           :refreshComments="refreshComments"

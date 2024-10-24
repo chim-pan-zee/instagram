@@ -46,7 +46,7 @@
         <comment-list
           :postId="postId"
           :comments="comments"
-          :contents="contents"
+          :content="content"
           :author="userId"
           :postcreatedAt="postcreatedAt"
           :refreshComments="refreshComments"
@@ -93,7 +93,7 @@ const refreshComments = ref(false);
 const createdAt = ref("");
 const timeAgo = ref("");
 const userId = ref("");
-const contents = ref("");
+const content = ref("");
 const postcreatedAt = ref("");
 const focusCommentForm = ref(false);
 
@@ -154,7 +154,7 @@ const getContents = () => {
     .then((res) => {
       console.log("콘텐츠 받음:", res.data);
       userId.value = res.data.username;
-      contents.value = res.data.content;
+      content.value = res.data.content;
       postcreatedAt.value = res.data.created_at;
       if (res.data.created_at) {
         createdAt.value = new Date(res.data.created_at);

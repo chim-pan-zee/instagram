@@ -9,7 +9,7 @@
       >
         <post-header
           :userUUID="post.user_uuid"
-          :userId="post.username"
+          :username="post.username"
           :created-at="post.created_at"
           :postId="post.post_uuid"
           @updatePost="openUpdateModal(post.post_uuid, post.post_content)"

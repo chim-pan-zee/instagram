@@ -2,7 +2,7 @@
   <div class="form-wrap">
     <profile-image :filename="username" class="profile-image"></profile-image>
     <input
-      v-model="contents"
+      v-model="content"
       class="base-input"
       placeholder="댓글 달기..."
       maxlength="1000"
@@ -37,11 +37,11 @@ const props = defineProps({
 const emit = defineEmits(["uploadedComment"]);
 
 const authorToken = window.localStorage.getItem("user_token");
-const contents = ref("");
+const content = ref("");
 const isDisabled = ref(true);
 const commentRef = ref(null);
 
-watch(contents, (newValue) => {
+watch(content, (newValue) => {
   isDisabled.value = newValue.trim() === "";
 });
 
@@ -49,7 +49,7 @@ const uploadComment = () => {
   const commentData = {
     authorToken: authorToken,
     postId: props.postId,
-    contents: contents.value,
+    contents: content.value,
   };
   axios
     .post("/comm", commentData)
@@ -57,7 +57,7 @@ const uploadComment = () => {
       if (res.data != false) {
         console.log("전송됨", res.data);
         emit("uploadedComment");
-        contents.value = "";
+        content.value = "";
         isDisabled.value = true;
 
         setTimeout(() => {

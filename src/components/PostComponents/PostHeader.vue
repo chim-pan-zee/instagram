@@ -1,16 +1,16 @@
 <template>
   <div class="post-header">
     <button class="user-profile-img">
-      <profile-image :filename="userId" class="profile-image"></profile-image>
+      <profile-image :filename="username" class="profile-image"></profile-image>
     </button>
     <button class="user-id">
-      {{ userId }}<b> • {{ convertTime(props.createdAt, currentTime) }}</b>
+      {{ username }}<b> • {{ convertTime(props.createdAt, currentTime) }}</b>
     </button>
 
     <button
       class="post-option"
       @click="controlModal"
-      v-if="userId == Cookies.get('userId')"
+      v-if="username == Cookies.get('username')"
     >
       <img src="/assets/icons/ellipsis-8.svg" alt="" />
     </button>
@@ -29,7 +29,7 @@ import PostEditModal from "../Modals/PostModals/PostEditModal.vue";
 import { ref, defineProps, onMounted, defineEmits } from "vue";
 import Cookies from "js-cookie";
 
-const userId = ref("");
+const username = ref("");
 const userUUID = ref("");
 const isModalVisible = ref(false);
 
@@ -41,14 +41,14 @@ const updatePostModal = () => {
 };
 
 const props = defineProps({
-  userId: String,
+  username: String,
   userUUID: String,
   createdAt: String,
   postId: String,
 });
 
 onMounted(() => {
-  userId.value = props.userId;
+  username.value = props.username;
   userUUID.value = props.userUUID;
 });
 
