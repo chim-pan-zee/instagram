@@ -1,6 +1,6 @@
 <template>
   <div class="form-wrap">
-    <profile-image class="profile-image"></profile-image>
+    <profile-image :filename="username" class="profile-image"></profile-image>
     <input
       v-model="contents"
       class="base-input"
@@ -24,6 +24,9 @@ import { ref, defineProps, defineEmits, watch } from "vue";
 import ProfileImage from "../ProfileComponents/ProfileImage.vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import Cookies from "js-cookie";
+const username = Cookies.get("username");
+
 const router = useRouter();
 
 const props = defineProps({

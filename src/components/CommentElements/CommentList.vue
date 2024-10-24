@@ -1,7 +1,7 @@
 <template>
   <div class="comments-wrap">
     <div class="comment" v-for="(comment, index) in comments" :key="index">
-      <profile-image></profile-image>
+      <profile-image :filename="comment.username"></profile-image>
       <div class="author-id">
         <span class="bold">{{ comment.username }}</span>
         {{ comment.contents }}

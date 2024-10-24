@@ -5,7 +5,7 @@
       :filename="props.filename"
       v-if="props.filename != 'profileImg'"
     />
-    <profile-image v-else class="img-wrap"></profile-image>
+    <profile-image v-else class="img-wrap" :filename="username"></profile-image>
     <div class="text-wrap"><slot name="text">로드 중</slot></div>
   </base-button>
 </template>
@@ -15,6 +15,9 @@ import BaseButton from "./BaseButton.vue";
 import BaseIcon from "./BaseIcon.vue";
 import ProfileImage from "../ProfileComponents/ProfileImage.vue";
 import { defineProps } from "vue";
+import Cookies from "js-cookie";
+
+const username = Cookies.get("username");
 
 const props = defineProps({
   filename: String,

@@ -1,7 +1,7 @@
 <template>
   <div class="post-header">
     <button class="user-profile-img">
-      <profile-image class="profile-image"></profile-image>
+      <profile-image :filename="userId" class="profile-image"></profile-image>
     </button>
     <button class="user-id">
       {{ userId }}<b> • {{ convertTime(props.createdAt, currentTime) }}</b>

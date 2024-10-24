@@ -43,6 +43,8 @@ const userName = ref("");
 const userNameType = ref(null);
 const userPassword = ref("");
 
+const fileName = ref("");
+
 const inputCheck = (inputType) => {
   if (inputType == "userName") {
     if (emailPattern.test(userName.value) === true) {
@@ -77,9 +79,7 @@ const signInUser = () => {
         localStorage.setItem("user_token", res.data.user_token);
         Cookies.set("username", res.data.username, { path: "" });
         Cookies.set("name", res.data.name, { path: "" });
-        console.log("전송됨", res.data);
-        console.log("쿠키:" + Cookies.get("username"));
-        console.log("토큰:" + localStorage.getItem("user_token"));
+        getUserProfileImage(res.data.username);
         router.push("/");
       })
       .catch((err) => {
@@ -93,6 +93,26 @@ const signInUser = () => {
   } else {
     console.log("타입이 없습니다");
   }
+};
+
+const getUserProfileImage = (username) => {
+  axios
+    .get(`/file/${username}`)
+    .then((res) => {
+      if (res.data != null) {
+        fileName.value = res.data;
+        console.log("넓입니다" + res.data);
+        Cookies.set("fileName", fileName.value);
+      } else {
+        fileName.value = null;
+        console.log("넓입니다" + res.data);
+        Cookies.set("fileName", fileName.value);
+      }
+    })
+    .catch((err) => {
+      console.error("이미지 불러오던 중 에러", err);
+      alert("이미지 정상적으로 처리되지 않았습니다. " + err.response?.data);
+    });
 };
 </script>
 

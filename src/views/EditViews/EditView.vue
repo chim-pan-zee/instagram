@@ -3,10 +3,13 @@
     <div class="edit-menu-wrap">
       <h2 style="font-weight: 800">설정</h2>
       <button class="edit-profile">
-        <profile-image class="edit-profile-image"></profile-image>
+        <profile-image
+          class="edit-profile-image"
+          :filename="cookieUserName"
+        ></profile-image>
         <b>프로필 편집</b>
       </button>
-      <button class="edit-account">
+      <!-- <button class="edit-account">
         <img src="/assets/icons/gearicon.png" alt="" />
         <b>계정 설정</b>
         <input
@@ -16,13 +19,22 @@
           required
           hidden
         />
-      </button>
+      </button> -->
     </div>
     <div class="edit-info">
       <h2>{{ "프로필 편집" }}</h2>
     </div>
     <div class="user-info">
-      <img class="profile-image" :src="selectedFile" v-if="selectedFile" />
+      <img
+        class="profile-image"
+        :src="selectedFile"
+        v-if="selectedFile && localImg == true"
+      />
+      <img
+        class="profile-image"
+        :src="`/upload/${fileName}`"
+        v-if="selectedFile && localImg == false"
+      />
       <b1>{{ username }}</b1>
       <b2>{{ name }}</b2>
       <button @click="triggerFileUpload">사진 변경</button>
@@ -43,7 +55,7 @@
     <div class="user-gender">
       <h3>성별</h3>
       <select name="" id="" v-model="gender">
-        <option value="0">밝히고 싶지 않음</option>
+        <option value="">밝히고 싶지 않음</option>
         <option value="1">여성</option>
         <option value="2">남성</option>
       </select>
@@ -51,11 +63,11 @@
     <div class="user-submit">
       <button @click="uploadUser">제출</button>
     </div>
-    <div>
+    <!-- <div>
       <h3>계정 비활성화</h3>
       <b>주의:신중히 결정하십시오.</b>
       <button>비활성화</button>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -68,10 +80,14 @@ import axios from "axios";
 
 const router = useRouter();
 
+const cookieUserName = ref(Cookies.get("username"));
 const username = ref("");
 const name = ref("");
-const selectedFile = ref(null);
+const selectedFile = ref("/assets/icons/Default_pfp.svg");
 const fileInput = ref();
+const defaultImg = ref(true);
+const localImg = ref(false);
+const fileName = ref("");
 
 const userDesc = ref("");
 const gender = ref("");
@@ -86,6 +102,8 @@ onMounted(() => {
 
   username.value = Cookies.get("username");
   name.value = Cookies.get("name");
+
+  getUserProfileImage(username.value);
 });
 
 const triggerFileUpload = () => {
@@ -96,7 +114,10 @@ const handleFileChange = (event) => {
   const file = event.target.files[0];
   if (file) {
     selectedFile.value = URL.createObjectURL(file);
-    formData.append("image", file);
+    formData.append("file", file);
+    defaultImg.value = false;
+    localImg.value = true;
+    console.log(file);
   }
 };
 
@@ -106,19 +127,38 @@ const uploadUser = async () => {
     authorToken: authorToken,
     userDesc: userDesc.value,
     userGender: gender.value,
+    defaultImg: defaultImg.value,
   };
+  console.log(postData);
   formData.append(
     "key",
     new Blob([JSON.stringify(postData)], { type: "application/json" })
   );
-
   axios
     .put(`/${username.value}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     })
+    .then(() => {
+      location.reload(true);
+    })
+    .catch((err) => {
+      console.error("이미지 불러오던 중 에러", err);
+      alert("이미지 정상적으로 처리되지 않았습니다. " + err.response?.data);
+    });
+};
+
+const getUserProfileImage = (username) => {
+  console.log(username);
+  axios
+    .get(`/file/${username}`)
     .then((res) => {
+      if (res.data != null) {
+        localImg.value = false;
+        Cookies.set("fileName", res.data);
+        fileName.value = res.data;
+      }
       console.log("이미지 데이터가 도착했습니다.", res.data);
     })
     .catch((err) => {
@@ -239,6 +279,7 @@ button {
   grid-row: 1;
   height: 45px;
   width: 45px;
+  border-radius: 9999px;
 
   align-items: center;
 }

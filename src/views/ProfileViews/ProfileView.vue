@@ -1,7 +1,7 @@
 <template>
   <div class="profile-wrap">
     <header>
-      <profile-image class="profile-image"></profile-image>
+      <profile-image class="profile-image" :filename="username"></profile-image>
 
       <profile-info class="profile-info" :username="username">
         <template #username>{{ username }}</template>

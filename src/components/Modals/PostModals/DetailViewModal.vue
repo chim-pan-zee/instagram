@@ -35,7 +35,12 @@
       </div>
       <div class="contents-wrap">
         <header>
-          <button><profile-image class="profile-image"></profile-image></button>
+          <button>
+            <profile-image
+              class="profile-image"
+              :filename="userId"
+            ></profile-image>
+          </button>
           <button>{{ userId }}</button>
         </header>
         <comment-list
