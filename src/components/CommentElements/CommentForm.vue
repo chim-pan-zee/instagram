@@ -36,7 +36,7 @@ const props = defineProps({
 
 const emit = defineEmits(["uploadedComment"]);
 
-const authorToken = window.localStorage.getItem("user_token");
+const authorUUID = window.localStorage.getItem("user_uuid");
 const content = ref("");
 const isDisabled = ref(true);
 const commentRef = ref(null);
@@ -47,7 +47,7 @@ watch(content, (newValue) => {
 
 const uploadComment = () => {
   const commentData = {
-    authorToken: authorToken,
+    authorUUID: authorUUID,
     postId: props.postId,
     contents: content.value,
   };

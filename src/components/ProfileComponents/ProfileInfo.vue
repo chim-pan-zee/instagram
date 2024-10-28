@@ -9,7 +9,7 @@
     <div class="post-count">게시물 <slot name="posts">0</slot></div>
     <div class="followers">팔로워 <slot name="followers">0</slot></div>
     <div class="follows">팔로우 <slot name="follows">0</slot></div>
-    <div class="user-name"><slot name="user-name">로딩중</slot></div>
+    <div class="user-real-name"><slot name="userrealname">로딩중</slot></div>
   </div>
 </template>
 
@@ -31,11 +31,11 @@ const toEdit = () => {
 };
 
 const checkProfile = () => {
-  const userToken = window.localStorage.getItem("user_token");
+  const authorUUID = window.localStorage.getItem("user_uuid");
 
-  console.log("1" + props.username + " + " + userToken);
+  console.log("1" + props.username + " + " + authorUUID);
   axios
-    .get(`/${props.username}/${userToken}`)
+    .get(`/${props.username}/${authorUUID}`)
     .then((res) => {
       if (res.data == true) {
         isMyProfile.value = true;
@@ -109,7 +109,7 @@ watch(
   font-size: 12pt;
 }
 
-.user-name {
+.user-real-name {
   grid-column: 1/ 2;
   grid-row: 6;
   text-align: left;

@@ -145,7 +145,7 @@ const currentIndex = ref(0);
 const isLoaded = ref(false);
 
 const userId = ref(Cookies.get("userId"));
-const authorToken = window.localStorage.getItem("user_token");
+const authorUUID = window.localStorage.getItem("user_uuid");
 const contents = ref("");
 
 onMounted(() => {
@@ -180,7 +180,7 @@ const dropInputTag = (event) => {
 const uploadPost = () => {
   const postData = {
     postId: props.postId,
-    authorToken: authorToken,
+    authorUUID: authorUUID,
     contents: contents.value,
     images: images.value,
   };

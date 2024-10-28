@@ -172,7 +172,7 @@ const currentIndex = ref(0);
 const formData = new FormData();
 
 const userId = ref(Cookies.get("userId"));
-const authorToken = window.localStorage.getItem("user_token");
+const authorUUID = window.localStorage.getItem("user_uuid");
 const contents = ref("");
 
 const uploadImage = (event) => {
@@ -248,7 +248,7 @@ const clickInputTag = () => {
 
 const uploadPost = () => {
   const postData = {
-    authorToken: authorToken,
+    authorUUID: authorUUID,
     contents: contents.value,
   };
 

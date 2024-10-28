@@ -78,7 +78,7 @@ onMounted(() => {
 const userId = ref(props.userId);
 const contents = ref(props.contents);
 const postId = ref(props.postId);
-const authorToken = window.localStorage.getItem("user_token");
+const authorUUID = window.localStorage.getItem("user_uuid");
 const likesCount = ref("");
 const commentCount = ref("");
 const isLiked = ref(false);
@@ -107,7 +107,7 @@ const increaseLikes = () => {
 
   const likeData = {
     postId: postId.value,
-    authorToken: authorToken,
+    authorUUID: authorUUID,
   };
   axios
     .post("/likes", likeData)
@@ -163,7 +163,7 @@ const checkLiked = () => {
   console.log("좋아요 불러오기 중");
   const likeData = {
     postId: postId.value,
-    authorToken: authorToken,
+    authorUUID: authorUUID,
   };
   axios
     .post(`/likes/check`, likeData)
@@ -180,7 +180,7 @@ const checkLiked = () => {
 
 const uploadComment = () => {
   const commentData = {
-    authorToken: authorToken,
+    authorUUID: authorUUID,
     postId: props.postId,
     contents: comment.value,
   };

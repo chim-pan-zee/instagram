@@ -8,7 +8,7 @@
         <template #posts>{{ postCount }}</template>
         <template #followers></template>
         <template #follows></template>
-        <template #realname>{{ realname }}</template>
+        <template #userrealname>{{ realname }}</template>
       </profile-info>
     </header>
 
@@ -43,7 +43,7 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 
-const authorToken = window.localStorage.getItem("user_token");
+const authorUUID = window.localStorage.getItem("user_uuid");
 const currUrl = ref("");
 const username = ref("");
 const realname = ref("");
@@ -56,7 +56,7 @@ const isDetailViewModal = ref(false);
 const images = ref([]);
 
 onMounted(() => {
-  if (!authorToken) {
+  if (!authorUUID) {
     router.push("/signin");
   }
 
@@ -68,7 +68,7 @@ onMounted(() => {
     .get(`/${username.value}`)
     .then((res) => {
       if (res.data != null) {
-        realname.value = res.data.NAME;
+        realname.value = res.data.name;
         postCount.value = res.data.total;
       } else {
         router.push("/signin");
@@ -80,7 +80,7 @@ onMounted(() => {
 
   const infoData = {
     username: username.value,
-    userToken: authorToken,
+    authorUUID: authorUUID,
   };
 
   const formData = new FormData();
@@ -131,7 +131,7 @@ const closeModal = () => {
 }
 
 .profile-image {
-  grid-column: 2 / 4;
+  grid-column: 2 / 5;
 }
 
 .profile-info {

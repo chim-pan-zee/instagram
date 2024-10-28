@@ -101,7 +101,7 @@ const gender = ref("");
 const formData = new FormData();
 
 onMounted(() => {
-  const nowToken = window.localStorage.getItem("user_token");
+  const nowToken = window.localStorage.getItem("user_uuid");
   if (!nowToken) {
     router.push("/signin");
   }
@@ -116,6 +116,10 @@ const triggerFileUpload = () => {
   fileInput.value.click();
 };
 
+// window.onbeforeunload = function () {
+//   return false;
+// };
+
 const handleFileChange = (event) => {
   const file = event.target.files[0];
   if (file) {
@@ -128,9 +132,9 @@ const handleFileChange = (event) => {
 };
 
 const uploadUser = async () => {
-  const authorToken = window.localStorage.getItem("user_token");
+  const authorUUID = window.localStorage.getItem("user_uuid");
   const postData = {
-    authorToken: authorToken,
+    authorUUID: authorUUID,
     userDesc: userDesc.value,
     userGender: gender.value,
     defaultImg: defaultImg.value,

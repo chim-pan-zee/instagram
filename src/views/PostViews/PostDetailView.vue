@@ -90,7 +90,7 @@ const emit = defineEmits(["uploadComment", "closeModal"]);
 const images = ref([]);
 const currentIndex = ref(0);
 
-// const authorToken = window.localStorage.getItem("user_token");
+// const authorUUID = window.localStorage.getItem("user_uuid");
 
 const comments = ref([]);
 const refreshComments = ref(false);
@@ -175,7 +175,7 @@ const getContents = () => {
 };
 
 onMounted(() => {
-  const nowToken = window.localStorage.getItem("user_token");
+  const nowToken = window.localStorage.getItem("user_uuid");
 
   if (!nowToken) {
     router.push("/signin");

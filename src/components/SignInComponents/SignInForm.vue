@@ -76,10 +76,13 @@ const signInUser = () => {
     axios
       .post("/signin", signInData)
       .then((res) => {
-        localStorage.setItem("user_token", res.data.user_token);
+        localStorage.setItem("user_uuid", res.data.user_uuid);
+        localStorage.setItem("user_uuid", res.data.user_uuid);
         Cookies.set("username", res.data.username, { path: "" });
         Cookies.set("name", res.data.name, { path: "" });
         getUserProfileImage(res.data.username);
+        console.log(localStorage.getItem("user_uuid") + "로컬스토리지토큰");
+        console.log(localStorage.getItem("user_uuid") + "로컬스토리지uuid");
         router.push("/");
       })
       .catch((err) => {

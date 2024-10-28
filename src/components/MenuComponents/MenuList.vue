@@ -54,6 +54,7 @@ import { useRouter } from "vue-router";
 import Cookies from "js-cookie";
 import { ref } from "vue";
 import MoreModal from "@/components/Modals/MoreModal.vue";
+import axios from "axios";
 
 const router = useRouter();
 
@@ -89,12 +90,28 @@ const closeMoreModal = () => {
 };
 
 const logOut = () => {
-  localStorage.setItem("user_token", null);
+  localStorage.setItem("user_uuid", null);
   Cookies.set("username", null);
   Cookies.set("name", null);
-  router.push({
-    path: "/signin",
-  });
+  // router.push({
+  //   path: "/signin",
+  // });
+  axios
+    .post("/signout", localStorage.getItem("user_uuid"))
+    .then((res) => {
+      console.log(localStorage.getItem("user_uuid") + "로컬스토리지토큰" + res);
+      localStorage.setItem("user_uuid", null);
+
+      router.push("/signin");
+    })
+    .catch((err) => {
+      console.error(err);
+      alert(
+        "로그아웃이 정상적으로 처리되지 않았습니다. " +
+          err.data +
+          "관리자에게 문의 바랍니다."
+      );
+    });
 };
 </script>
 

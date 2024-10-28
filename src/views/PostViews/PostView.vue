@@ -56,7 +56,7 @@ import axios from "axios";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
-const authorToken = window.localStorage.getItem("user_token");
+const authorUUID = window.localStorage.getItem("user_uuid");
 
 const posts = ref([]);
 const isDetailViewModal = ref(false);
@@ -75,7 +75,7 @@ const openUpdateModal = (id, contents) => {
 };
 
 onMounted(() => {
-  if (!authorToken) {
+  if (!authorUUID) {
     router.push("/signin");
   }
 
@@ -142,7 +142,6 @@ const closeModal = () => {
   window.history.pushState(null, "", `/`);
 };
 </script>
-
 
 <style>
 .observer-target {

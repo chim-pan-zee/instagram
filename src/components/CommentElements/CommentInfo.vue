@@ -40,12 +40,12 @@ const isAnimating = ref(false);
 const timeAgo = ref("");
 
 const checkLiked = () => {
-  const authorToken = window.localStorage.getItem("user_token");
+  const authorUUID = window.localStorage.getItem("user_uuid");
 
   console.log("좋아요 불러오기 중");
   const likeData = {
     postId: postId.value,
-    authorToken: authorToken,
+    authorUUID: authorUUID,
   };
   axios
     .post(`/likes/check`, likeData)
@@ -60,7 +60,7 @@ const checkLiked = () => {
 };
 
 const increaseLikes = () => {
-  const authorToken = window.localStorage.getItem("user_token");
+  const authorUUID = window.localStorage.getItem("user_uuid");
 
   isLiked.value = !isLiked.value;
   isAnimating.value = true;
@@ -70,7 +70,7 @@ const increaseLikes = () => {
   }, 300);
   const likeData = {
     postId: postId.value,
-    authorToken: authorToken,
+    authorUUID: authorUUID,
   };
   axios
     .post("/likes", likeData)
