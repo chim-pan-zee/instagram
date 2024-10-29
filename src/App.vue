@@ -24,6 +24,8 @@ import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import MenuList from "./components/MenuComponents/MenuList.vue";
 import MakePostModal from "./components/Modals/PostModals/MakePostModal.vue";
+import Cookies from "js-cookie";
+import axios from "axios";
 const route = useRoute();
 
 const isAuthPage = computed(() => {
@@ -50,6 +52,52 @@ const closeMakePostModal = () => {
   document.body.style.overflowY = "";
   window.scrollTo(0, scrollPosition);
 };
+
+const checkTokenExpiration = () => {
+  const accessUUID = localStorage.getItem("user_uuid");
+  const tokenReceivedTime = Cookies.get("tokenReceivedTime");
+  if (accessUUID) {
+    const currentTime = Math.floor(Date.now() / 1000);
+    console.log(tokenReceivedTime);
+    console.log(currentTime);
+    console.log(currentTime - tokenReceivedTime);
+    if (currentTime - tokenReceivedTime > 30) {
+      //30분 조금 안되는 시간
+      const refreshUUID = localStorage.getItem("user_refresh_uuid");
+      refreshTokenRequire(accessUUID, refreshUUID);
+    }
+  }
+};
+
+const refreshTokenRequire = (accessUUID, refreshUUID) => {
+  const UUIDs = {
+    accessUUID: accessUUID,
+    refreshUUID: refreshUUID,
+  };
+  axios
+    .post("/refresh", UUIDs)
+    .then((res) => {
+      localStorage.setItem("user_uuid", res.data.user_uuid);
+      localStorage.setItem("user_refresh_uuid", res.data.user_refresh_uuid);
+      Cookies.set("tokenReceivedTime", Math.floor(Date.now() / 1000));
+    })
+    .catch((err) => {
+      console.error("토큰 불러오던 중 에러", err);
+      alert("글 작성이 정상적으로 처리되지 않았습니다. " + err.response?.data);
+    });
+};
+
+// setInterval(() => {
+//   checkTokenExpiration();
+// }, 30000); //30초마다 확인함
+
+setInterval(() => {
+  checkTokenExpiration();
+}, 10000); //30초마다 확인함
+
+//spring에 존재하는 토큰의 제한시간은 30분임.
+//약 27분 쯤에 토큰을 다시 불러야 함.
+//30초마다 토큰의 남은 시간을 체크하고, 남은 시간이 3분 이하일 경우 서버로 호출.
 </script>
 <style>
 #app {

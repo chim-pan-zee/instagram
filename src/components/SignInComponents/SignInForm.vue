@@ -77,11 +77,16 @@ const signInUser = () => {
       .post("/signin", signInData)
       .then((res) => {
         localStorage.setItem("user_uuid", res.data.user_uuid);
-        localStorage.setItem("user_uuid", res.data.user_uuid);
+        localStorage.setItem("user_refresh_uuid", res.data.user_refresh_uuid);
         Cookies.set("username", res.data.username, { path: "" });
         Cookies.set("name", res.data.name, { path: "" });
+        Cookies.set("tokenReceivedTime", Math.floor(Date.now() / 1000));
+        console.log(
+          Cookies.get("tokenReceivedTime"),
+          "이봐 이 토큰리시브타임이라는거 정말 좋은데"
+        );
         getUserProfileImage(res.data.username);
-        console.log(localStorage.getItem("user_uuid") + "로컬스토리지토큰");
+        // console.log(localStorage.getItem("user_uuid") + "로컬스토리지토큰");
         console.log(localStorage.getItem("user_uuid") + "로컬스토리지uuid");
         router.push("/");
       })
